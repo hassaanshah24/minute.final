@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Edit Profile Card -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header text-white text-center py-4"
+                     style="background: linear-gradient(135deg, #B22222, #8B0000); border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    <h3 class="mb-0">Edit Profile</h3>
+                </div>
+                <div class="card-body px-5 py-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Username (Read-only) -->
+                        <div class="form-group mb-4">
+                            <label for="username" class="form-label text-dark"><strong>Username:</strong></label>
+                            <input type="text" id="username" class="form-control bg-light border-0 shadow-sm rounded-3"
+                                   value="{{ user.username }}" readonly>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group mb-4">
+                            <label for="email" class="form-label text-dark"><strong>Email:</strong></label>
+                            {{ form.email }}
+                        </div>
+
+                        <!-- Designation -->
+                        <div class="form-group mb-4">
+                            <label for="designation" class="form-label text-dark"><strong>Designation:</strong></label>
+                            {{ form.designation }}
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="form-group mb-4">
+                            <label for="phone_number" class="form-label text-dark"><strong>Phone Number:</strong></label>
+                            {{ form.phone_number }}
+                        </div>
+
+                        <!-- Department -->
+                        <div class="form-group mb-4">
+                            <label for="department" class="form-label text-dark"><strong>Department:</strong></label>
+                            {{ form.department }}
+                        </div>
+
+                        <!-- Profile Picture -->
+                        <div class="form-group mb-4">
+                            <label for="profile_picture" class="form-label text-dark"><strong>Profile Picture:</strong></label>
+                            {{ form.profile_picture }}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group mt-4 text-center">
+                            <button type="submit" class="btn btn-gradient-danger btn-lg px-5 shadow">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .btn-gradient-danger {
+        background: linear-gradient(135deg, #B22222, #8B0000);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .btn-gradient-danger:hover {
+        background: linear-gradient(135deg, #8B0000, #B22222);
+        color: white;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 10px 12px;
+    }
+
+    .card-header h3 {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .card-body {
+        background: linear-gradient(to bottom right, #f5f5f5, #ffffff);
+    }
+</style>
+{% endblock %}

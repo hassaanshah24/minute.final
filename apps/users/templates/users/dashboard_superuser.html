@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Superuser Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Superuser Dashboard Header -->
+    <h2 class="text-center mb-4" style="color: #6a0000; font-family: 'Montserrat', sans-serif; font-weight: 700;">
+        Welcome, {{ user.username }} (Superuser)
+    </h2>
+
+    <!-- Superuser Actions -->
+    <div class="row g-4">
+        <!-- System Overview -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-chart-line fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">System Overview</h5>
+                    <p class="card-text">Monitor overall system statistics and performance.</p>
+                    <a href="#" class="btn btn-primary">View Stats</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Users -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Manage Users</h5>
+                    <p class="card-text">Add, edit, or remove system users.</p>
+                    <a href="/admin/users/customuser/" class="btn btn-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Departments -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-building fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Manage Departments</h5>
+                    <p class="card-text">Add, edit, or remove departments.</p>
+                    <a href="{% url 'departments:dashboard' %}" class="btn btn-primary">Manage Departments</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+   <!-- Admin-Specific Actions -->
+    <h3 class="text-center mb-4">Admin Tools</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Manage Approvals -->
+        <div class="col">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-tasks fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Manage Approvals</h5>
+                    <p class="card-text">Review pending minutes for approval or rejection.</p>
+                    <a href="#" class="btn btn-primary">Go to Approvals</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Department Archives -->
+        <div class="col">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-archive fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">View Department Archives</h5>
+                    <p class="card-text">Access all archived minutes in your department.</p>
+                    <a href="#" class="btn btn-primary">View Archives</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval Process Tracker -->
+        <div class="col">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-chart-line fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Approval Process Tracker</h5>
+                    <p class="card-text">Get a detailed view of the approval process for all your minutes.</p>
+                    <a href="#" class="btn btn-primary">Track Approval Chain</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Faculty-Specific Actions -->
+    <h3 class="text-center mb-4">Faculty Tools</h3>
+    <div class="row g-4">
+        <!-- Create Minute -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-edit fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Create Minute</h5>
+                    <p class="card-text">Document important minutes with ease.</p>
+                    <a href="#" class="btn btn-success">Create Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Track Minutes -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-search fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Track Minutes</h5>
+                    <p class="card-text">Monitor the status of all submitted minutes.</p>
+                    <a href="#" class="btn btn-primary">Track Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Archives -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-archive fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">View Archives</h5>
+                    <p class="card-text">Access your personal archive of minutes.</p>
+                    <a href="#" class="btn btn-secondary">View Archives</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

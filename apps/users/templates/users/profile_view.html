@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Profile Card -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header text-white text-center py-4"
+                     style="background: linear-gradient(135deg, #B22222, #8B0000); border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    <h3 class="mb-0">User Profile</h3>
+                </div>
+                <div class="card-body px-5 py-4" style="background-color: #f8f8f8;">
+                    <div class="text-center mb-4">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture"
+                                 class="rounded-circle shadow"
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #8B0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);">
+                        {% else %}
+                            <img src="{% static 'default_profile.png' %}" alt="Default Profile Picture"
+                                 class="rounded-circle shadow"
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 4px solid #8B0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);">
+                        {% endif %}
+                        <h4 class="mt-3 font-weight-bold text-dark">{{ user.first_name }} {{ user.last_name }}</h4>
+                        <p class="badge bg-danger text-white p-2 mt-1" style="font-size: 1rem; font-weight: 500; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);">
+                            {{ user.get_role_display }}
+                        </p>
+                    </div>
+
+                    <!-- Personal Details Section -->
+                    <div class="row my-4">
+                        <div class="col-12">
+                            <h5 class="text-danger mb-3"><i class="fas fa-user-circle"></i> Personal Details</h5>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm bg-white rounded-3 p-3">
+                                <strong>Username:</strong>
+                                <p class="text-muted mb-0">{{ user.username }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm bg-white rounded-3 p-3">
+                                <strong>Email:</strong>
+                                <p class="text-muted mb-0">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm bg-white rounded-3 p-3">
+                                <strong>Phone Number:</strong>
+                                <p class="text-muted mb-0">{{ user.phone_number|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm bg-white rounded-3 p-3">
+                                <strong>Department:</strong>
+                                <p class="text-muted mb-0">
+                                    {% if user.department %}
+                                        {{ user.department.name }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm bg-white rounded-3 p-3">
+                                <strong>Designation:</strong>
+                                <p class="text-muted mb-0">{{ user.designation|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 shadow-sm bg-white rounded-3 p-3">
+                                <strong>Employee ID:</strong>
+                                <p class="text-muted mb-0">{{ user.employee_id|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Profile Button -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'users:profile_edit' %}" class="btn btn-gradient-danger btn-lg px-5 shadow">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .btn-gradient-danger {
+        background: linear-gradient(135deg, #B22222, #8B0000);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+
+    .btn-gradient-danger:hover {
+        background: linear-gradient(135deg, #8B0000, #B22222);
+        color: white;
+    }
+
+    .card h5 {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .card p {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .badge {
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+    }
+
+    .card-body {
+        background: linear-gradient(to bottom right, #f5f5f5, #ffffff);
+    }
+
+    @media (max-width: 768px) {
+        img {
+            width: 120px;
+            height: 120px;
+        }
+
+        h4 {
+            font-size: 18px;
+        }
+    }
+</style>
+{% endblock %}

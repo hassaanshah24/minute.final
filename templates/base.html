@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Minute Sheet Maker{% endblock %}</title>
+
+    <!-- Enhanced Styles -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        :root {
+            --primary-color: #6a0000;
+            --secondary-color: #450000;
+            --accent-color: #d32f2f; /* Changed to a deep red */
+            --dark-bg: #121212;
+            --light-bg: #f8f9fa;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            background: var(--light-bg);
+            color: var(--dark-bg);
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        body.dark-mode {
+            background: var(--dark-bg);
+            color: #e0e0e0;
+        }
+
+        /* 🚀 Advanced Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover::after {
+            transform: scaleX(1);
+        }
+
+        .navbar-brand img {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link {
+            position: relative;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .dropdown-menu {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-item {
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 🌟 Main Content */
+        main {
+            flex: 1;
+            padding-top: 100px;
+            padding-bottom: 60px; /* Space for footer */
+        }
+
+        /* 🚀 Footer (Modern Gradient Border) */
+        footer {
+            background: var(--dark-bg);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            animation: wave 5s linear infinite;
+        }
+
+        footer a {
+            color: var(--accent-color) !important;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* 🚀 Back to Top Button */
+        #back-to-top {
+            background: var(--primary-color);
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 🚀 Dark Mode Toggle */
+        #toggleDarkMode {
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #toggleDarkMode:hover {
+            transform: rotate(15deg);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 🚀 Animations */
+        @keyframes wave {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px var(--accent-color); }
+            50% { box-shadow: 0 0 20px var(--accent-color); }
+            100% { box-shadow: 0 0 10px var(--accent-color); }
+        }
+    </style>
+</head>
+<body class="d-flex flex-column" id="main-body">
+
+    <!-- 🚀 Advanced Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="{% static 'images/logo.jpeg' %}" alt="Logo" width="45" height="45" class="me-2 rounded-circle border border-light">
+                <span class="text-white fw-bold fs-4">Minute Sheet Maker</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-4">
+                    {% if user.is_authenticated and request.path != '/users/login/' %}
+                    <!-- Home -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{% url 'users:redirect_view' %}">
+                            <i class="fas fa-home me-2"></i> <span>Home</span>
+                        </a>
+                    </li>
+
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center position-relative" href="#"
+                           id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell me-2"></i> <span>Notifications</span>
+                            {% if unread_notifications_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
+                                {{ unread_notifications_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                            {% for notification in user.notifications.all|slice:":5" %}
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center py-2 {% if not notification.is_read %}bg-light{% endif %}"
+                                   href="{{ notification.link }}">
+                                    <i class="fas fa-circle text-xs me-2 text-primary"></i>
+                                    <span>{{ notification.message }}</span>
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li class="text-muted text-center py-2">No new notifications</li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-center text-primary fw-bold" href="#">
+                                    View All Notifications
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="{% url 'users:profile' %}">
+                            <i class="fas fa-user-circle me-2"></i> <span>Profile</span>
+                        </a>
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center text-danger fw-bold" href="#"
+                           onclick="document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt me-2"></i> <span>Logout</span>
+                        </a>
+                        <form id="logout-form" method="post" action="{% url 'users:logout' %}" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </li>
+
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light rounded-circle ms-2" id="toggleDarkMode">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="flex-grow-1 p-4" style="padding-top: 100px;" data-aos="fade-up">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 🚀 Footer -->
+    <footer>
+        <div class="container">
+            <small>
+                &copy; {{ current_year|default:2025 }} Minute Sheet Maker |
+                <a href="#" class="text-white text-decoration-none">Privacy Policy</a> |
+                <a href="#" class="text-white text-decoration-none">Terms of Use</a>
+            </small>
+        </div>
+    </footer>
+
+    <!-- 🚀 Back to Top Button -->
+    <button class="btn btn-primary btn-lg shadow-lg rounded-circle position-fixed bottom-4 end-4"
+            id="back-to-top" style="display: none;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Dark Mode Toggle
+        document.addEventListener("DOMContentLoaded", function () {
+            const darkModeButton = document.getElementById("toggleDarkMode");
+            const body = document.body;
+
+            if (localStorage.getItem("darkMode") === "enabled") {
+                body.classList.add("dark-mode");
+                darkModeButton.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            darkModeButton.addEventListener("click", function () {
+                body.classList.toggle("dark-mode");
+                if (body.classList.contains("dark-mode")) {
+                    localStorage.setItem("darkMode", "enabled");
+                    darkModeButton.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    localStorage.setItem("darkMode", "disabled");
+                    darkModeButton.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+        });
+
+        // Back to Top Button
+        window.addEventListener('scroll', function() {
+            document.getElementById('back-to-top').style.display = window.scrollY > 300 ? 'block' : 'none';
+        });
+
+        document.getElementById('back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

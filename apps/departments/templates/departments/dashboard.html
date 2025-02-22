@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Departments Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">Departments Dashboard</h2>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Total Departments</h5>
+                    <p class="display-4">{{ total_departments }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card text-center shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Departments with Heads</h5>
+                    <p class="display-4">{{ department_heads }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-striped shadow-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Head of Department</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for department in departments %}
+            <tr>
+                <td>{{ department.name }}</td>
+                <td>{{ department.code }}</td>
+                <td>{{ department.description }}</td>
+                <td>{{ department.head_of_department.username|default:"Not Assigned" }}</td>
+                <td>{{ department.created_at|date:"D, d M Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">No departments found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-center mt-4">
+        <a href="/admin/departments/department/" class="btn btn-primary">
+            <i class="fas fa-cogs"></i> Manage Departments in Admin Panel
+        </a>
+    </div>
+</div>
+{% endblock %}
