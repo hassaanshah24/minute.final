@@ -5,132 +5,438 @@
 
 {% block content %}
 <div class="container py-5">
-    <!-- Superuser Dashboard Header -->
-    <h2 class="text-center mb-4" style="color: #6a0000; font-family: 'Montserrat', sans-serif; font-weight: 700;">
-        Welcome, {{ user.username }} (Superuser)
-    </h2>
+    <!-- Dashboard Header -->
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3 dashboard-title">
+            Welcome, {{ user.username }} <span class="text-muted fs-5">(Superuser)</span>
+        </h2>
+        <div class="header-divider"></div>
+    </div>
 
-    <!-- Superuser Actions -->
-    <div class="row g-4">
+    <!-- System Management Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="section-heading">System Management</h3>
+        </div>
+
         <!-- System Overview -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-chart-line fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">System Overview</h5>
-                    <p class="card-text">Monitor overall system statistics and performance.</p>
-                    <a href="#" class="btn btn-primary">View Stats</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">System Overview</h5>
+                    <p class="card-text text-center">Monitor overall system statistics and performance.</p>
+                    <a href="#" class="btn btn-primary w-100 mt-auto">
+                        View Stats
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Manage Users -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-users fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Manage Users</h5>
-                    <p class="card-text">Add, edit, or remove system users.</p>
-                    <a href="/admin/users/customuser/" class="btn btn-primary">Manage Users</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-users fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Manage Users</h5>
+                    <p class="card-text text-center">Add, edit, or remove system users.</p>
+                    <a href="/admin/users/customuser/" class="btn btn-primary w-100 mt-auto">
+                        Manage Users
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Manage Departments -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-building fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Manage Departments</h5>
-                    <p class="card-text">Add, edit, or remove departments.</p>
-                    <a href="{% url 'departments:dashboard' %}" class="btn btn-primary">Manage Departments</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-building fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Manage Departments</h5>
+                    <p class="card-text text-center">Add, edit, or remove departments.</p>
+                    <a href="{% url 'departments:dashboard' %}" class="btn btn-primary w-100 mt-auto">
+                        Manage Departments
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <hr class="my-5">
+    <!-- Section Separator -->
+    <div class="section-divider">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M1200 120L0 0 0 0 1200 0 1200 120z" class="shape-fill"></path>
+        </svg>
+    </div>
 
-   <!-- Admin-Specific Actions -->
-    <h3 class="text-center mb-4">Admin Tools</h3>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Admin Tools Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="section-heading">Administration Tools</h3>
+        </div>
+
         <!-- Manage Approvals -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-tasks fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Manage Approvals</h5>
-                    <p class="card-text">Review pending minutes for approval or rejection.</p>
-                    <a href="#" class="btn btn-primary">Go to Approvals</a>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-tasks fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Manage Approvals</h5>
+                    <p class="card-text text-center">Review pending minutes for approval or rejection.</p>
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- View Department Archives -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-archive fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">View Department Archives</h5>
-                    <p class="card-text">Access all archived minutes in your department.</p>
-                    <a href="#" class="btn btn-primary">View Archives</a>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-archive fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">View Department Archives</h5>
+                    <p class="card-text text-center">Access all archived minutes in your department.</p>
+
+                        View Archives
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Approval Process Tracker -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-chart-line fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Approval Process Tracker</h5>
-                    <p class="card-text">Get a detailed view of the approval process for all your minutes.</p>
-                    <a href="#" class="btn btn-primary">Track Approval Chain</a>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Approval Process Tracker</h5>
+                    <p class="card-text text-center">Detailed view of approval processes.</p>
+
+                        Track Chain
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <hr class="my-5">
+    <!-- Section Separator -->
+    <div class="section-divider flipped">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M1200 120L0 0 0 0 1200 0 1200 120z" class="shape-fill"></path>
+        </svg>
+    </div>
 
-    <!-- Faculty-Specific Actions -->
-    <h3 class="text-center mb-4">Faculty Tools</h3>
+    <!-- Faculty Tools Section -->
     <div class="row g-4">
+        <div class="col-12">
+            <h3 class="section-heading">Faculty Operations</h3>
+        </div>
+
         <!-- Create Minute -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-edit fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Create Minute</h5>
-                    <p class="card-text">Document important minutes with ease.</p>
-                    <a href="#" class="btn btn-success">Create Now</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-edit fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Create Minute</h5>
+                    <p class="card-text text-center">Document important minutes with ease.</p>
+
+                        Create Now
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Track Minutes -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-search fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Track Minutes</h5>
-                    <p class="card-text">Monitor the status of all submitted minutes.</p>
-                    <a href="#" class="btn btn-primary">Track Now</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-search fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Track Minutes</h5>
+                    <p class="card-text text-center">Monitor status of submitted minutes.</p>
+
+                        Track Now
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- View Archives -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-archive fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">View Archives</h5>
-                    <p class="card-text">Access your personal archive of minutes.</p>
-                    <a href="#" class="btn btn-secondary">View Archives</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-archive fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">View Archives</h5>
+
+                        View Archives
+                        <div class="hover-shine"></div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --primary-color: #6a0000;
+        --accent-color: #c4a484;
+        --text-dark: #2d3436;
+        --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .dashboard-title {
+        color: var(--primary-color);
+        font-family: 'Montserrat', sans-serif;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .header-divider {
+        width: 200px;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            var(--primary-color) 50%,
+            transparent 100%);
+        margin: 0 auto;
+    }
+
+    .hover-card {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+    .hover-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        transition: 0.6s;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .hover-card:hover::before {
+        left: 100%;
+    }
+
+    .icon-container {
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(106, 0, 0, 0.05);
+        border-radius: 50%;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .icon-container::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg,
+            var(--primary-color),
+            var(--accent-color));
+        border-radius: inherit;
+        z-index: -1;
+        opacity: 0;
+        transition: var(--transition);
+    }
+
+    .hover-card:hover .icon-container::after {
+        opacity: 1;
+    }
+
+    .btn {
+        position: relative;
+        overflow: hidden;
+        border: none;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        transition: var(--transition);
+        border-radius: 8px;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+    }
+
+    .btn-success {
+        background: #228B22;
+    }
+
+    .hover-shine {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.3) 100%
+        );
+        transform: skewX(-25deg);
+        transition: 0.6s;
+    }
+
+    .btn:hover .hover-shine {
+        left: 150%;
+    }
+
+    .section-divider {
+        position: relative;
+        height: 120px;
+        margin: 4rem 0;
+    }
+
+    .section-divider svg {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+    .section-divider.flipped svg {
+        transform: rotate(180deg);
+    }
+
+    .shape-fill {
+        fill: #FFFFFF;
+    }
+
+    .section-heading {
+        color: var(--primary-color);
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-left: 1.5rem;
+    }
+
+    .section-heading::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 80%;
+        background: var(--primary-color);
+        border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+        .section-divider {
+            height: 60px;
+            margin: 2rem 0;
+        }
+
+        .section-heading {
+            font-size: 1.1rem;
+            padding-left: 1rem;
+        }
+
+        .section-heading::before {
+            width: 6px;
+        }
+    }
+         /* 🌙 Fix Icons in Dark Mode */
+.dark-mode .icon-container i {
+    color: #ffcc00 !important; /* Brighter icon color */
+    filter: brightness(2); /* Boost visibility */
+}
+
+/* 🌙 Fix Card Text */
+.dark-mode .card-title,
+.dark-mode .card-text {
+    color: #ffffff !important; /* Ensures all text is bright */
+}
+
+/* 🌙 Fix Background for Icon Containers */
+.dark-mode .icon-container {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 50%;
+}
+/* ============================
+   🌙 Dark Mode Fixes for Dashboard
+   ============================ */
+.dark-mode .card {
+    background: rgba(40, 40, 40, 0.95) !important;
+    color: #f5f5f5 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dark-mode .card h5,
+.dark-mode .card p {
+    color: #f5f5f5 !important;
+}
+.dark-mode .btn-primary {
+    background: linear-gradient(90deg, #ff4444, #d32f2f) !important;
+    color: #fff !important;
+    border: none;
+}
+.dark-mode .btn-primary:hover {
+    background: linear-gradient(90deg, #d32f2f, #ff4444) !important;
+}
+.dark-mode .icon-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+.dark-mode .icon-container i {
+    filter: brightness(1.8);
+}
+.dark-mode .dashboard-title {
+    color: #ffcc00 !important;
+}
+.dark-mode .section-heading {
+    color: #ffcc00 !important;
+}
+.dark-mode .section-heading::before {
+    background: #ffcc00 !important;
+}
+.dark-mode .shape-fill {
+    fill: #222 !important;
+}
+</style>
 {% endblock %}

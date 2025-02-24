@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Delete Approval Chain{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Delete Approval Chain</h2>
+    <p class="text-muted text-center">Are you sure you want to delete <strong>{{ approval_chain.name }}</strong>?</p>
+    
+    <form method="POST" class="text-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+        <a href="{% url 'approval_chain:list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,25 +1,320 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block content %}
-<div class="container">
-    <div class="card mx-auto" style="max-width: 400px;">
-        <div class="card-body">
-            <h2>Login</h2>
-            <form method="post">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
-                </div>
-                <div class="mb-4">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Log In</button>
-            </form>
+<div class="login-container">
+    <div class="login-card">
+        <h2 class="text-center">Account Login</h2>
+        <p class="text-center auth-subtitle">Please enter your credentials</p>
+
+        {% if error_message %}
+        <div class="alert-danger">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ error_message }}</span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div class="mb-4">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" id="username" name="username" class="form-control"
+                           placeholder="Enter username" required autofocus>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" id="password" name="password"
+                           class="form-control" placeholder="••••••••" required>
+                    <button type="button" class="btn btn-eye" onclick="togglePassword()">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="btn login-btn w-100 mt-4">Continue</button>
+        </form>
     </div>
 </div>
+
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const eyeIcon = document.querySelector('.btn-eye i');
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+</script>
+
+<style>
+    :root {
+        --light-bg: #f8f9fa;
+        --dark-bg: #121212;
+        --card-light: #ffffff;
+        --card-dark: #1a1a1a;
+        --text-light: #2d3748;
+        --text-dark: #f8f9fa;
+        --border-light: #e2e8f0;
+        --border-dark: #2d3748;
+        --input-bg-light: #f1f5f9;
+        --input-bg-dark: #2d2d2d;
+        --primary-color: #dc2626;
+        --accent-color: #ef4444;
+        --hover-red: #b91c1c;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: var(--light-bg);
+        padding: 1rem;
+        transition: background 0.3s ease;
+    }
+
+    .login-card {
+        background: var(--card-light);
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 420px;
+        transition: all 0.3s ease;
+    }
+
+    .login-card h2 {
+        color: #8b0000 !important;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        text-align: center;
+        letter-spacing: -0.5px;
+    }
+    .dark-mode .login-card h2 {
+    color: #ef4444 !important; /* Bright red in dark mode */
+}
+    .auth-subtitle {
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-label {
+        color: var(--text-light);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    /* ✅ Clean Red Outline for Focus */
+.form-control:focus {
+    outline: none !important;
+    border-color: #b91c1c !important; /* Deep red border */
+    box-shadow: 0 0 6px rgba(185, 28, 28, 0.5) !important; /* Soft red glow */
+    transition: all 0.2s ease-in-out;
+}
+
+/* ✅ Also apply to the entire input group */
+.input-group:focus-within {
+    border-color: #b91c1c !important;
+    box-shadow: 0 0 6px rgba(185, 28, 28, 0.5) !important;
+}
+
+    .input-group-text {
+        background: transparent;
+        border: none;
+        padding: 0 1rem;
+        color: #6b7280;
+        transition: color 0.3s ease;
+    }
+    /* Dark Mode Input Field Fix */
+.dark-mode .form-control {
+    color: #ffffff !important; /* Ensures text is visible */
+    background: #1a1a1a !important; /* Dark background */
+    border: 1px solid #b91c1c !important; /* Soft red border */
+}
+
+/* Adjust Placeholder Text for Better Visibility */
+.dark-mode .form-control::placeholder {
+    color: #b3b3b3 !important; /* Light gray for contrast */
+    opacity: 1;
+}
+
+    .form-control {
+        border: none;
+        padding: 1rem;
+        font-size: 1rem;
+        color: var(--text-light);
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .form-control::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+        opacity: 0.8;
+    }
+
+    .btn-eye {
+        background: transparent;
+        border: none;
+        padding: 0 1rem;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-eye:hover {
+        color: var(--primary-color);
+    }
+
+ .login-btn {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    padding: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #8b0000 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(220, 38, 38, 0.5);
+}
+
+    /* Error Message */
+    .alert-danger {
+        background: #fee2e2;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border: 1px solid #fca5a5;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .alert-danger i {
+        font-size: 1.2rem;
+    }
+
+    .alert-close {
+        background: transparent;
+        border: none;
+        color: #dc2626;
+        cursor: pointer;
+        margin-left: auto;
+        padding: 0 0.5rem;
+    }
+
+    .alert-close:hover {
+        color: #b91c1c;
+    }
+
+    /* Dark Mode */
+    .dark-mode .login-container {
+        background: var(--dark-bg);
+    }
+
+    .dark-mode .login-card {
+        background: var(--card-dark);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .login-card h2 {
+        color: var(--accent-color);
+    }
+
+    .dark-mode .auth-subtitle {
+        color: #a1a1aa;
+    }
+
+    .dark-mode .form-label {
+        color: var(--text-dark);
+    }
+
+    .dark-mode .input-group {
+        background: var(--input-bg-dark);
+        border-color: #374151;
+    }
+
+    .dark-mode .form-control {
+        color: var(--text-dark);
+    }
+
+    .dark-mode .form-control::placeholder {
+        color: #94a3b8;
+    }
+
+    .dark-mode .input-group-text,
+    .dark-mode .btn-eye {
+        color: #6b7280;
+    }
+
+    .dark-mode .input-group:focus-within {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    .dark-mode .login-btn {
+        background: var(--accent-color);
+    }
+
+    .dark-mode .login-btn:hover {
+        background: #dc2626;
+    }
+
+    .dark-mode .alert-danger {
+        background: #450a0a;
+        color: #fecaca;
+        border-color: #7f1d1d;
+    }
+
+    .dark-mode .alert-close {
+        color: #fecaca;
+    }
+
+    .dark-mode .alert-close:hover {
+        color: #fca5a5;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 {% endblock %}

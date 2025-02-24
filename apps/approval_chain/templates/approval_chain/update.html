@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Edit Approval Chain{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Edit Approval Chain</h2>
+    <form method="POST" class="card p-4 shadow-sm mx-auto" style="max-width: 500px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Update
+        </button>
+    </form>
+</div>
+{% endblock %}

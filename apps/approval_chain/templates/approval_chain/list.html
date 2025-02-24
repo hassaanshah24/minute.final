@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Approval Chains{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Approval Chains</h2>
+
+    <a href="{% url 'approval_chain:create' %}" class="btn btn-primary my-3">
+        <i class="fas fa-plus-circle"></i> Create New Chain
+    </a>
+
+    <div class="row">
+        {% for chain in approval_chains %}
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm mb-4">
+                <h5>{{ chain.name }}</h5>
+                <p>Created on: {{ chain.created_at|date:"M d, Y" }}</p>
+                <a href="{% url 'approval_chain:detail' chain.id %}" class="btn btn-primary">
+                    <i class="fas fa-eye"></i> View Details
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center">No approval chains available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

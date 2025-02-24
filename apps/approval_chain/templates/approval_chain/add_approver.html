@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Add Approver{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Add Approver to: <strong>{{ approval_chain.name }}</strong></h2>
+
+    <!-- ✅ Display Success/Error Messages -->
+    {% if messages %}
+    <div class="alert alert-dismissible fade show text-center mx-auto" style="max-width: 500px;">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- ✅ Form for Adding a Single Approver -->
+            <div class="card shadow-sm p-4 mb-4">
+                <h5 class="text-center"><i class="fas fa-user-plus"></i> Add Single Approver</h5>
+                <form method="POST" action="{% url 'approval_chain:add_approver' approval_chain.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.user.id_for_label }}" class="form-label">Select User</label>
+                        {{ form.user }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.order.id_for_label }}" class="form-label">Approval Order</label>
+                        {{ form.order }}
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-user-check"></i> Add Approver
+                    </button>
+                </form>
+            </div>
+
+            <!-- ✅ Form for Adding Multiple Approvers (FIFO Order) -->
+            <div class="card shadow-sm p-4">
+                <h5 class="text-center"><i class="fas fa-users"></i> Add Multiple Approvers</h5>
+                <form method="POST" action="{% url 'approval_chain:add_bulk_approvers' approval_chain.id %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="bulk_users" class="form-label">Select Multiple Users</label>
+                        <select name="users" id="bulk_users" class="form-control select2" multiple>
+                            {% for user in bulk_approver_form.fields.users.queryset %}
+                                <option value="{{ user.id }}">{{ user.get_full_name }} ({{ user.username }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- ✅ Hidden field to store FIFO order -->
+                    <input type="hidden" name="order" id="order_field">
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-users"></i> Add Selected Approvers
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Back Button -->
+    <div class="text-center mt-4">
+        <a href="{% url 'approval_chain:detail' approval_chain.id %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Approval Chain
+        </a>
+    </div>
+</div>
+
+<!-- ✅ Import Select2 for Improved User Selection -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+
+<script>
+    $(document).ready(function () {
+        let selectionOrder = [];
+        let lastOrder = parseInt({{ approval_chain.approvers.aggregate.max_order|default:0 }}) + 1;
+
+        // ✅ Initialize Select2 with alphabetical sorting
+        $('#bulk_users').select2({
+            placeholder: "Select users...",
+            allowClear: true,
+            width: '100%',
+            sorter: function(data) {
+                return data.sort((a, b) => a.text.localeCompare(b.text)); // ✅ Alphabetical sorting
+            }
+        });
+
+        // ✅ Handle Single Approver Sync with Bulk Approver
+        let singleOrder = lastOrder;
+        $("#{{ form.user.id_for_label }}").change(function () {
+            if ($(this).val()) {
+                singleOrder = lastOrder;
+            }
+        });
+
+        $('#bulk_users').on('select2:select', function (e) {
+            let userId = e.params.data.id;
+            if (!selectionOrder.includes(userId)) {
+                selectionOrder.push(userId);
+            }
+            updateOrderField();
+        });
+
+        $('#bulk_users').on('select2:unselect', function (e) {
+            let userId = e.params.data.id;
+            selectionOrder = selectionOrder.filter(id => id !== userId);
+            updateOrderField();
+        });
+
+        function updateOrderField() {
+            let orders = selectionOrder.map((userId, index) => `${userId}:${singleOrder + index}`);
+            $('#order_field').val(orders.join(","));  // ✅ Assign sequential order
+        }
+    });
+</script>
+
+{% endblock %}

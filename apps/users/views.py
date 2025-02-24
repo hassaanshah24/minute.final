@@ -1,4 +1,9 @@
+# views.py
 import logging
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.debug import sensitive_post_parameters
+
 from django.contrib.auth.views import LoginView as BaseLoginView, LogoutView as BaseLogoutView
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
@@ -9,28 +14,36 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.users.forms import ProfileUpdateForm
 from apps.departments.models import Department
 
-# ✅ Enable logging
 logger = logging.getLogger(__name__)
 
 
 class LoginView(BaseLoginView):
-    """
-    Custom Login View with improved error handling & redirects.
-    """
     template_name = "users/login.html"
+    redirect_authenticated_user = True
 
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            messages.info(request, "You are already logged in.")
-            return redirect(reverse('users:redirect_view'))  # Redirect logged-in users to dashboard
-        return super().get(request, *args, **kwargs)
+    @method_decorator(sensitive_post_parameters('password'))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        """
-        Handle invalid login attempts with error messages.
-        """
-        messages.error(self.request, "Invalid username or password. Please try again.")
-        return super().form_invalid(form)
+        """ Handles failed login attempts and shows proper error messages """
+        error_messages = {
+            'invalid_login': "Invalid username or password.",
+            'inactive': "This account is inactive. Contact admin.",
+            'locked': "Your account has been temporarily locked due to too many failed login attempts. Try again later.",
+        }
+
+        # Default error message
+        message = error_messages['invalid_login']
+
+        for error in form.errors.get('__all__', []):
+            if 'locked' in error.lower():
+                message = error_messages['locked']
+            elif 'inactive' in error.lower():
+                message = error_messages['inactive']
+
+        # Show error inside the login form
+        return self.render_to_response(self.get_context_data(form=form, error_message=message))
 
 
 class LogoutView(BaseLogoutView):
@@ -45,7 +58,7 @@ class LogoutView(BaseLogoutView):
         return super().dispatch(request, *args, **kwargs)
 
 
-# ✅ DASHBOARDS BASED ON ROLE
+# DASHBOARDS BASED ON ROLE
 class FacultyDashboardView(LoginRequiredMixin, TemplateView):
     """ Faculty Dashboard """
     template_name = "users/dashboard_faculty.html"
@@ -113,4 +126,4 @@ def landing_page(request):
     """
     if request.user.is_authenticated:
         return redirect(reverse('users:redirect_view'))
-    return render(request, 'users/templates/landing.html')
+    return render(request, 'users/landing.html')

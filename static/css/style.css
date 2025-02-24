@@ -1,325 +1,266 @@
 /* ============================
-   🌟 Base Styles (Enhanced)
+   🌟 Base Styles (Light Mode)
    ============================ */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #fdfdfd;
-    color: #333;
-    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+    background: var(--color-bg);
+    color: var(--color-text);
     line-height: 1.6;
     overflow-x: hidden;
 }
 
-/* 🌙 Dark Mode (Advanced) */
+/* ============================
+   🌑 Dark Mode Base
+   ============================ */
 .dark-mode {
-    background-color: #121212 !important;
-    color: #e0e0e0 !important;
-}
-
-.dark-mode a {
-    color: #ffc107;
-}
-
-.dark-mode a:hover {
-    color: #ffd700;
+    --color-text: var(--dark-color-text);
+    --color-bg: var(--dark-color-bg);
+    --color-card: var(--dark-color-card);
+    --color-input: var(--dark-color-input);
+    --color-primary: var(--dark-color-primary);
 }
 
 /* ============================
-   🌟 Navbar (Futuristic Upgrade)
+   🌟 Enhanced Professional Navbar
    ============================ */
 .navbar {
-    background: linear-gradient(90deg, #6a0000, #8b0000);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(90deg, #6a0000 0%, #8b0000 100%) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1.5rem;
 }
 
-.navbar-brand {
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+.dark-mode .navbar {
+    background: linear-gradient(90deg, #2a0a0a 0%, #3a1a1a 100%) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid rgba(255, 204, 0, 0.15);
 }
 
-/* Navbar Links (Holographic Effect) */
+/* 📌 Bold Nav Items */
 .navbar-nav .nav-link {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #fff;
-    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
-    position: relative;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1.25rem;
+    margin: 0 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode .navbar-nav .nav-link {
+    color: #FFA500 !important; /* Deep orange-gold */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 165, 0, 0.05);
+}
+
+/* 📌 Professional Hover Effects */
+.dark-mode .navbar-nav .nav-link:hover {
+    background: rgba(255, 165, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.2);
+}
+
+/* 📌 Bold Branding */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 1.5px;
     padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-.navbar-nav .nav-link:hover {
-    color: #ffc107 !important;
-    transform: scale(1.1);
-    text-shadow: 0 0 10px #ffc107;
+.dark-mode .navbar-brand {
+    color: #FFA500 !important;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
+    background: rgba(0, 0, 0, 0.2);
 }
 
-/* Animated Underline (Glow Effect) */
-.navbar-nav .nav-link::after {
+.dark-mode .navbar-brand:hover {
+    background: rgba(255, 165, 0, 0.1);
+}
+
+/* 📌 Active State Enhancement */
+.navbar-nav .nav-item.active .nav-link {
+    border: 2px solid rgba(255, 165, 0, 0.4);
+    background: rgba(255, 165, 0, 0.1);
+}
+
+/* 📌 Mobile Menu Enhancements */
+@media (max-width: 768px) {
+    .navbar-collapse {
+        background: rgba(0, 0, 0, 0.9);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+    }
+
+    .dark-mode .navbar-collapse {
+        background: rgba(30, 30, 30, 0.95);
+        border: 1px solid rgba(255, 165, 0, 0.1);
+    }
+}
+
+/* 📌 Subtle Glow Effect */
+.dark-mode .navbar-nav .nav-link::after {
     content: '';
     position: absolute;
-    width: 0;
-    height: 2px;
     bottom: -2px;
     left: 50%;
-    background-color: #ffc107;
-    box-shadow: 0 0 10px #ffc107;
-    transition: width 0.3s ease, left 0.3s ease;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent,
+        #FFA500,
+        transparent);
+    transition: all 0.4s ease;
 }
 
-.navbar-nav .nav-link:hover::after {
+.dark-mode .navbar-nav .nav-link:hover::after {
     width: 100%;
     left: 0;
 }
+/* ============================
+   📌 Forms & Input Fields
+   ============================ */
+.form-control {
+    background: var(--color-input);
+    color: var(--color-text);
+    border: 1px solid var(--color-primary);
+    padding: 0.75rem;
+    border-radius: 4px;
+    width: 100%;
+}
 
-/* Dark Mode Navbar (Cyberpunk Style) */
-.dark-mode .navbar {
-    background: linear-gradient(90deg, #3a0000, #6a0000);
-    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.1);
+/* 🔹 Dark Mode Input Fields */
+.dark-mode .form-control {
+    background: #333; /* Dark but visible */
+    color: #ffffff; /* White text for contrast */
+    border-color: #cc4444; /* Red border for consistency */
+}
+
+/* 🔹 Placeholder Text */
+.form-control::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #bbb;
+}
+
+/* 🔹 Readonly Fields */
+.readonly-field {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.dark-mode .readonly-field {
+    background: #444;
+    color: #ddd; /* Brighter text for readability */
 }
 
 /* ============================
-   🌟 Dark Mode Button (Futuristic)
+   🌟 Buttons
    ============================ */
-#toggleDarkMode {
-    border: 2px solid white;
-    padding: 8px;
-    font-size: 16px;
-    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#toggleDarkMode:hover {
-    background: #ffc107;
-    color: #000;
-    transform: scale(1.1) rotate(15deg);
-    box-shadow: 0 0 15px #ffc107;
-}
-
-/* ============================
-   🌟 Buttons (Neon Glassmorphism)
-   ============================ */
-button.btn-primary {
-    background: linear-gradient(90deg, #6a0000, #d32f2f);
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-primary), #d32f2f);
     border: none;
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease, background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    position: relative;
-    overflow: hidden;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
-button.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
+.btn-primary:hover {
+    background: linear-gradient(90deg, #d32f2f, var(--color-primary));
+    box-shadow: 0 4px 10px rgba(178, 34, 34, 0.4);
 }
 
-button.btn-primary:hover {
-    background: linear-gradient(90deg, #d32f2f, #6a0000);
-    transform: scale(1.07);
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.3);
+.dark-mode .btn-primary {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-button.btn-primary:hover::before {
-    top: 50%;
-    left: 50%;
+.dark-mode .btn-primary:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 
 /* ============================
-   🌟 Forms (Holographic Glassmorphism)
+   🌟 Cards (Profile, Dashboard, etc.)
    ============================ */
 .card {
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-.card h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #6a0000;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 0 10px rgba(106, 0, 0, 0.2);
-}
-
-/* Input Fields (Futuristic) */
-input.form-control {
+    background: var(--color-card);
     border-radius: 8px;
-    border: 1px solid #ced4da;
-    font-size: 1rem;
-    padding: 0.75rem;
-    transition: all 0.3s ease-in-out;
-    background: rgba(255, 255, 255, 0.9);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-input.form-control:focus {
-    border-color: #6a0000;
-    box-shadow: 0 0 12px rgba(106, 0, 0, 0.5);
-    background: rgba(255, 255, 255, 1);
-}
-
-/* ============================
-   🌟 Tooltips (Holographic Design)
-   ============================ */
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.tooltip .tooltip-text {
-    visibility: hidden;
-    width: 160px;
-    background-color: #ffc107;
-    color: #000;
-    text-align: center;
-    border-radius: 5px;
-    padding: 6px;
-    position: absolute;
-    bottom: 130%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-}
-
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(-50%) translateY(-5px);
-}
-
-/* ============================
-   🌟 Approval Status Badges (Glow Effect)
-   ============================ */
-.status-badge {
-    display: inline-block;
-    padding: 0.6rem 1rem;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.3s ease-in-out;
-}
-
-.status-badge:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-}
-
-.status-badge.pending {
-    background-color: #f0ad4e;
-    box-shadow: 0 0 10px rgba(240, 173, 78, 0.5);
-}
-
-.status-badge.approved {
-    background-color: #5cb85c;
-    box-shadow: 0 0 10px rgba(92, 184, 92, 0.5);
-}
-
-.status-badge.rejected {
-    background-color: #d9534f;
-    box-shadow: 0 0 10px rgba(217, 83, 79, 0.5);
-}
-
-.status-badge.returned {
-    background-color: #0275d8;
-    box-shadow: 0 0 10px rgba(2, 117, 216, 0.5);
-}
-
-/* ============================
-   🌟 Footer (Holographic Upgrade)
-   ============================ */
-footer {
-    background: #6a0000;
-    color: white;
-    font-size: 0.85rem;
-    text-align: center;
-    padding: 1.2rem 0;
-    width: 100%;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.15);
-    position: relative;
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-footer a {
-    color: #ffc107;
-    text-decoration: none;
-    transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
-}
-
-footer a:hover {
-    color: #ffd700;
-    text-decoration: underline;
-    text-shadow: 0 0 10px #ffd700;
-}
-
-/* ============================
-   🌟 Responsive Design (Enhanced)
-   ============================ */
-@media (max-width: 768px) {
-    .navbar-brand {
-        font-size: 1.3rem;
-    }
-
-    .card {
-        padding: 1.5rem;
-    }
-
-    .navbar-nav .nav-link {
-        padding: 0.5rem;
-    }
-}
-
-/* ============================
-   🌟 Dark Mode Enhancements (Futuristic)
-   ============================ */
 .dark-mode .card {
-    background: rgba(30, 30, 30, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dark-mode .form-control {
-    background: #333;
-    color: #fff;
+    background: var(--dark-color-card);
     border-color: #444;
 }
 
+/* Profile Edit Card */
+.profile-edit-card {
+    background: var(--color-card);
+    padding: 2rem;
+    border-radius: 12px;
+}
+
+.dark-mode .profile-edit-card {
+    background: var(--dark-color-card);
+    border: 1px solid #333;
+}
+
+/* ============================
+   👤 Profile Picture Styling
+   ============================ */
+.profile-picture-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--color-primary);
+    display: block;
+    margin: 15px auto;
+}
+
+.dark-mode .profile-picture-preview img {
+    border-color: var(--dark-color-primary);
+    background: var(--dark-color-input);
+}
+
+/* ============================
+   🌟 Footer
+   ============================ */
+footer {
+    background: var(--color-primary);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
 .dark-mode footer {
-    background: #1a1a1a;
-    box-shadow: 0 -4px 10px rgba(255, 215, 0, 0.1);
+    background: var(--dark-color-bg);
+}
+
+/* ============================
+   🔄 Transition Effects
+   ============================ */
+.form-control, .btn-primary, .nav-link {
+    transition: all 0.3s ease-in-out;
+}
+
+/* ============================
+   📱 Mobile Responsiveness
+   ============================ */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .profile-picture-preview img {
+        width: 100px;
+        height: 100px;
+    }
 }

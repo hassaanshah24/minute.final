@@ -1,65 +1,84 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static %}  <!-- ✅ FIXED: Load static before using it -->
 
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-5" style="padding-bottom: 6rem;">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <!-- Edit Profile Card -->
-            <div class="card shadow-lg border-0 rounded-4">
+            <div class="card shadow-lg border-0 rounded-4"
+                style="background: #fff; color: #333; border-radius: 12px; padding-bottom: 20px;">
+
                 <div class="card-header text-white text-center py-4"
-                     style="background: linear-gradient(135deg, #B22222, #8B0000); border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                    style="background: linear-gradient(135deg, #B22222, #8B0000); border-top-left-radius: 12px; border-top-right-radius: 12px;">
                     <h3 class="mb-0">Edit Profile</h3>
                 </div>
+
                 <div class="card-body px-5 py-4">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
                         <!-- Username (Read-only) -->
-                        <div class="form-group mb-4">
-                            <label for="username" class="form-label text-dark"><strong>Username:</strong></label>
-                            <input type="text" id="username" class="form-control bg-light border-0 shadow-sm rounded-3"
-                                   value="{{ user.username }}" readonly>
-                        </div>
+<div class="form-group mb-4">
+    <label for="username" class="form-label">Username:</label>
+    <input type="text" id="username" name="username" class="form-control readonly-field"
+           value="{{ user.username }}" readonly>
+</div>
 
-                        <!-- Email -->
-                        <div class="form-group mb-4">
-                            <label for="email" class="form-label text-dark"><strong>Email:</strong></label>
-                            {{ form.email }}
-                        </div>
+<!-- Email -->
+<div class="form-group mb-4">
+    <label for="id_email" class="form-label">Email:</label>
+    <input type="email" id="id_email" name="email" class="form-control"
+           value="{{ form.email.value }}">
+</div>
 
-                        <!-- Designation -->
-                        <div class="form-group mb-4">
-                            <label for="designation" class="form-label text-dark"><strong>Designation:</strong></label>
-                            {{ form.designation }}
-                        </div>
+<!-- Designation -->
+<div class="form-group mb-4">
+    <label for="id_designation" class="form-label">Designation:</label>
+    <input type="text" id="id_designation" name="designation" class="form-control"
+           value="{{ form.designation.value }}">
+</div>
 
-                        <!-- Phone Number -->
-                        <div class="form-group mb-4">
-                            <label for="phone_number" class="form-label text-dark"><strong>Phone Number:</strong></label>
-                            {{ form.phone_number }}
-                        </div>
+<!-- Phone Number -->
+<div class="form-group mb-4">
+    <label for="id_phone_number" class="form-label">Phone Number:</label>
+    <input type="tel" id="id_phone_number" name="phone_number" class="form-control"
+           value="{{ form.phone_number.value }}">
+</div>
 
-                        <!-- Department -->
-                        <div class="form-group mb-4">
-                            <label for="department" class="form-label text-dark"><strong>Department:</strong></label>
-                            {{ form.department }}
-                        </div>
+<!-- Department -->
+<div class="form-group mb-4">
+    <label for="id_department" class="form-label">Department:</label>
+    <select id="id_department" name="department" class="form-control">
+        {% for value, text in form.department.field.choices %}
+            <option value="{{ value }}" {% if form.department.value == value %}selected{% endif %}>
+                {{ text }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
 
-                        <!-- Profile Picture -->
-                        <div class="form-group mb-4">
-                            <label for="profile_picture" class="form-label text-dark"><strong>Profile Picture:</strong></label>
-                            {{ form.profile_picture }}
-                        </div>
+<!-- Profile Picture -->
+<div class="form-group mb-5 text-center">
+    <label for="id_profile_picture" class="form-label">Profile Picture:</label>
+    <div class="profile-picture-preview">
+        <img id="profilePreview"
+             src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}"
+             alt="Profile Picture"
+             class="profile-image">
+    </div>
+    <input type="file" id="id_profile_picture" name="profile_picture" class="form-control-file">
+</div>
 
-                        <!-- Submit Button -->
-                        <div class="form-group mt-4 text-center">
-                            <button type="submit" class="btn btn-gradient-danger btn-lg px-5 shadow">
-                                <i class="fas fa-save"></i> Save Changes
-                            </button>
-                        </div>
+<!-- Submit Button -->
+<div class="form-group mt-4 text-center">
+    <button type="submit" class="btn btn-primary btn-save">
+        <i class="fas fa-save"></i> Save Changes
+    </button>
+</div>
+
                     </form>
                 </div>
             </div>
@@ -67,38 +86,97 @@
     </div>
 </div>
 
-<!-- Custom Styling -->
+<!-- Profile Image Preview Script -->
+<script>
+document.getElementById("id_profile_picture").addEventListener("change", function(event) {
+    let reader = new FileReader();
+    reader.onload = function(){
+        let output = document.getElementById('profilePreview');
+        output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+});
+</script>
+
+<!-- ✅ DARK MODE FIX -->
 <style>
-    .btn-gradient-danger {
-        background: linear-gradient(135deg, #B22222, #8B0000);
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
-        font-size: 1.1rem;
-    }
+/* Dark Mode */
+.dark-mode .card {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 1px solid #333;
+}
 
-    .btn-gradient-danger:hover {
-        background: linear-gradient(135deg, #8B0000, #B22222);
-        color: white;
-    }
+.dark-mode .card-header {
+    background: linear-gradient(135deg, #550000, #aa0000) !important;
+    color: white !important;
+}
 
-    .form-label {
-        font-weight: 600;
-        font-size: 1rem;
-    }
+.dark-mode .form-label {
+    color: #f8f9fa !important;
+}
 
-    .form-control {
-        font-size: 1rem;
-        padding: 10px 12px;
-    }
+.dark-mode .form-control {
+    background: #2a2a2a !important;
+    color: white !important;
+    border: 1px solid #cc4444 !important;
+    padding: 12px;
+    border-radius: 8px;
+}
 
-    .card-header h3 {
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
+.dark-mode .form-control::placeholder {
+    color: #888 !important;
+}
 
-    .card-body {
-        background: linear-gradient(to bottom right, #f5f5f5, #ffffff);
-    }
+.dark-mode .readonly-field {
+    background: #333 !important;
+    color: #bbb !important;
+    border: 1px solid #555 !important;
+}
+
+/* Dark Mode Button */
+.dark-mode .btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: white !important;
+}
+
+.dark-mode .btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5) !important;
+}
+
+/* Dark Mode Profile Picture */
+.dark-mode .profile-picture-preview img {
+    border-color: #ef4444 !important;
+    background: #2a2a2a !important;
+}
+/* Add to your existing CSS */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    margin-top: 80px; /* Adjust based on navbar height */
+    padding-bottom: 40px; /* Space above footer */
+}
+
+footer {
+    margin-top: auto;
+    padding: 20px;
+    background: #6a0000;
+    color: white;
+}
+
+/* For fixed navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
 </style>
+
 {% endblock %}

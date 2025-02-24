@@ -194,87 +194,103 @@
 </head>
 <body class="d-flex flex-column" id="main-body">
 
-    <!-- 🚀 Advanced Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="{% static 'images/logo.jpeg' %}" alt="Logo" width="45" height="45" class="me-2 rounded-circle border border-light">
-                <span class="text-white fw-bold fs-4">Minute Sheet Maker</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav align-items-center gap-4">
-                    {% if user.is_authenticated and request.path != '/users/login/' %}
-                    <!-- Home -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{% url 'users:redirect_view' %}">
-                            <i class="fas fa-home me-2"></i> <span>Home</span>
-                        </a>
-                    </li>
+   <!-- 🚀 Advanced Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+    <div class="container">
+        <!-- Brand / Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'users:redirect_view' %}">
+            <img src="{% static 'images/logo.jpeg' %}" alt="Logo" width="45" height="45"
+                 class="me-2 rounded-circle border border-light">
+            <span class="text-white fw-bold fs-4">Minute Sheet Maker</span>
+        </a>
 
-                    <!-- Notifications -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center position-relative" href="#"
-                           id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-bell me-2"></i> <span>Notifications</span>
-                            {% if unread_notifications_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
-                                {{ unread_notifications_count }}
-                            </span>
-                            {% endif %}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg">
-                            {% for notification in user.notifications.all|slice:":5" %}
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center py-2 {% if not notification.is_read %}bg-light{% endif %}"
-                                   href="{{ notification.link }}">
-                                    <i class="fas fa-circle text-xs me-2 text-primary"></i>
-                                    <span>{{ notification.message }}</span>
-                                </a>
-                            </li>
-                            {% empty %}
-                            <li class="text-muted text-center py-2">No new notifications</li>
-                            {% endfor %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-center text-primary fw-bold" href="#">
-                                    View All Notifications
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+        <!-- Toggle Button (For Mobile) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                    <!-- Profile -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{% url 'users:profile' %}">
-                            <i class="fas fa-user-circle me-2"></i> <span>Profile</span>
-                        </a>
-                    </li>
+        <!-- Navbar Items -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center gap-4">
+                {% if user.is_authenticated and request.path != '/users/login/' %}
 
-                    <!-- Logout -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center text-danger fw-bold" href="#"
-                           onclick="document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt me-2"></i> <span>Logout</span>
-                        </a>
-                        <form id="logout-form" method="post" action="{% url 'users:logout' %}" style="display: none;">
-                            {% csrf_token %}
-                        </form>
-                    </li>
+                <!-- Home -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'users:redirect_view' %}">
+                        <i class="fas fa-home me-2"></i> <span>Home</span>
+                    </a>
+                </li>
 
-                    <!-- Dark Mode Toggle -->
-                    <li class="nav-item">
-                        <button class="btn btn-outline-light rounded-circle ms-2" id="toggleDarkMode">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+                <!-- Approval Chains -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'approval_chain:list' %}">
+                        <i class="fas fa-stream me-2"></i> <span>Approval Chains</span>
+                    </a>
+                </li>
+
+                <!-- New Chain -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'approval_chain:create' %}">
+                        <i class="fas fa-plus-circle me-2"></i> <span>New Chain</span>
+                    </a>
+                </li>
+
+                <!-- Notifications -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center position-relative" href="#"
+                       id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell me-2"></i> <span>Notifications</span>
+                        {% if unread_notifications_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
+                            {{ unread_notifications_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                        {% for notification in user.notifications.all|slice:":5" %}
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center py-2 {% if not notification.is_read %}bg-light{% endif %}"
+                               href="{{ notification.link }}">
+                                <i class="fas fa-circle text-xs me-2 text-primary"></i>
+                                <span>{{ notification.message }}</span>
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li class="text-muted text-center py-2">No new notifications</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <!-- Profile -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'users:profile' %}">
+                        <i class="fas fa-user-circle me-2"></i> <span>Profile</span>
+                    </a>
+                </li>
+
+                <!-- Logout -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center text-danger fw-bold" href="#"
+                       onclick="document.getElementById('logout-form').submit();">
+                        <i class="fas fa-sign-out-alt me-2"></i> <span>Logout</span>
+                    </a>
+                    <form id="logout-form" method="post" action="{% url 'users:logout' %}" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                </li>
+
+                <!-- Dark Mode Toggle -->
+                <li class="nav-item">
+                    <button class="btn btn-outline-light rounded-circle" id="toggleDarkMode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+
+                {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Page Content -->
     <main class="flex-grow-1 p-4" style="padding-top: 100px;" data-aos="fade-up">
@@ -333,6 +349,28 @@
 
         document.getElementById('back-to-top').addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Add intersection observer for scroll animations
+         const cards = document.querySelectorAll('.hover-card');
+
+         const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+              }
+            });
+         }, { threshold: 0.1 });
+
+         cards.forEach(card => {
+           card.style.opacity = 0;
+           card.style.transform = 'translateY(20px)';
+           card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+           observer.observe(card);
+         });
         });
     </script>
 </body>

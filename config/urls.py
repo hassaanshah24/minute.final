@@ -12,7 +12,9 @@ urlpatterns = [
     # Other app routes
     path('users/', include('apps.users.urls', namespace='users')),  # Users app
     path('departments/', include('apps.departments.urls', namespace='departments')),
+path("approval-chain/", include("apps.approval_chain.urls", namespace="approval_chain")),
 ]
+
 
 # Serve media files during development
 if settings.DEBUG:

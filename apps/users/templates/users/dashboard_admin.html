@@ -1,95 +1,239 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- Admin Dashboard Header -->
-    <h2 class="text-center mb-4" style="color: #6a0000; font-family: 'Montserrat', sans-serif; font-weight: 700;">
-        Welcome, {{ user.username }} (Admin)
-    </h2>
+<div class="container py-5">
+    <!-- Dashboard Header -->
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3 dashboard-title">
+            Welcome, {{ user.username }} <span class="text-muted fs-5">(Administrator)</span>
+        </h2>
+        <div class="header-divider"></div>
+    </div>
 
-    <!-- Admin-Specific Actions -->
-    <h3 class="text-center mb-4">Admin Tools</h3>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        <!-- Manage Approvals -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-tasks fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Manage Approvals</h5>
-                    <p class="card-text">Review pending minutes for approval or rejection.</p>
-                    <a href="{% url 'approver:dashboard' %}" class="btn btn-primary">Go to Approvals</a>
+    <!-- System Management Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h3 class="section-heading">System Management</h3>
+        </div>
+
+        <!-- Approve Minutes -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-clipboard-check fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Approve Minutes</h5>
+                    <p class="card-text text-center">Review and validate pending meeting minutes.</p>
+                    <a href="#" class="btn btn-primary w-100 mt-auto">Review Submissions</a>
                 </div>
             </div>
         </div>
 
-        <!-- View Department Archives -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-archive fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">View Department Archives</h5>
-                    <p class="card-text">Access all archived minutes in your department.</p>
-                    <a href="{% url 'approver:department_archive' %}" class="btn btn-primary">View Archives</a>
+        <!-- Department Archives -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-archive fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Department Archives</h5>
+                    <p class="card-text text-center">Access historical records and documents.</p>
+                    <a href="#" class="btn btn-primary w-100 mt-auto">Open Archives</a>
                 </div>
             </div>
         </div>
 
-        <!-- Approval Process Tracker -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-chart-line fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Approval Process Tracker</h5>
-                    <p class="card-text">Get a detailed view of the approval process for all your minutes.</p>
-                    <a href="{% url 'approver:approval_tracker' %}" class="btn btn-primary">Track Approval Chain</a>
+        <!-- Approval Tracking -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-project-diagram fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Approval Tracking</h5>
+                    <p class="card-text text-center">Monitor ongoing approval workflows.</p>
+                    <a href="#" class="btn btn-primary w-100 mt-auto">Track Progress</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <hr class="my-5">
+    <!-- Faculty Operations -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h3 class="section-heading">Faculty Operations</h3>
+        </div>
 
-    <!-- Faculty Tools Section -->
-    <h3 class="text-center mb-4">Faculty Tools</h3>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
         <!-- Create Minute -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-edit fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Create Minute</h5>
-                    <p class="card-text">Document important minutes with ease.</p>
-                    <a href="{% url 'minute:create' %}" class="btn btn-success">Create Now</a>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-edit fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Create Minutes</h5>
+                    <p class="card-text text-center">Draft new meeting documentation.</p>
+                    <a href="#" class="btn btn-success w-100 mt-auto">Create Now</a>
                 </div>
             </div>
         </div>
 
-        <!-- Track Minutes -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-search fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">Track Minutes</h5>
-                    <p class="card-text">Monitor the status of all submitted minutes.</p>
-                    <a href="{% url 'minute:track' %}" class="btn btn-primary">Track Now</a>
+        <!-- Track Submissions -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-search fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Track Submissions</h5>
+                    <p class="card-text text-center">Monitor approval status updates.</p>
+                    <a href="#" class="btn btn-primary w-100 mt-auto">Track Now</a>
                 </div>
             </div>
         </div>
 
         <!-- View Archives -->
-        <div class="col">
-            <div class="card text-center shadow-sm border-0">
-                <div class="card-body">
-                    <i class="fas fa-archive fa-3x text-danger mb-3"></i>
-                    <h5 class="card-title">View Archives</h5>
-                    <p class="card-text">Access your personal archive of minutes.</p>
-                    <a href="{% url 'minute:archive' %}" class="btn btn-secondary">View Archives</a>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-folder-open fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">View Archives</h5>
+                    <p class="card-text text-center">Access your historical documents.</p>
+                    <a href="#" class="btn btn-secondary w-100 mt-auto">View Archives</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --primary-color: #6a0000;
+        --text-dark: #2d3436;
+        --transition: all 0.3s ease-in-out;
+    }
+
+    .dashboard-title {
+        color: var(--primary-color);
+        font-family: 'Montserrat', sans-serif;
+        padding-bottom: 1rem;
+    }
+
+    .header-divider {
+        width: 200px;
+        height: 3px;
+        background: var(--primary-color);
+        margin: 0 auto;
+    }
+
+    .hover-card {
+        transition: var(--transition);
+        background: #fff;
+        border-radius: 12px;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon-container {
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(106, 0, 0, 0.05);
+        border-radius: 50%;
+    }
+
+    .btn {
+        font-weight: 500;
+        transition: var(--transition);
+        border-radius: 8px;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-success {
+        background: #228B22;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #666;
+        color: white;
+    }
+
+    .section-heading {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+    }
+             /* 🌙 Fix Icons in Dark Mode */
+.dark-mode .icon-container i {
+    color: #ffcc00 !important; /* Brighter icon color */
+    filter: brightness(2); /* Boost visibility */
+}
+
+/* 🌙 Fix Card Text */
+.dark-mode .card-title,
+.dark-mode .card-text {
+    color: #ffffff !important; /* Ensures all text is bright */
+}
+
+/* 🌙 Fix Background for Icon Containers */
+.dark-mode .icon-container {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 50%;
+}
+/* ============================
+   🌙 Dark Mode Fixes for Dashboard
+   ============================ */
+.dark-mode .card {
+    background: rgba(40, 40, 40, 0.95) !important;
+    color: #f5f5f5 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dark-mode .card h5,
+.dark-mode .card p {
+    color: #f5f5f5 !important;
+}
+.dark-mode .btn-primary {
+    background: linear-gradient(90deg, #ff4444, #d32f2f) !important;
+    color: #fff !important;
+    border: none;
+}
+.dark-mode .btn-primary:hover {
+    background: linear-gradient(90deg, #d32f2f, #ff4444) !important;
+}
+.dark-mode .icon-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+.dark-mode .icon-container i {
+    filter: brightness(1.8);
+}
+.dark-mode .dashboard-title {
+    color: #ffcc00 !important;
+}
+.dark-mode .section-heading {
+    color: #ffcc00 !important;
+}
+.dark-mode .section-heading::before {
+    background: #ffcc00 !important;
+}
+.dark-mode .shape-fill {
+    fill: #222 !important;
+}
+</style>
 {% endblock %}

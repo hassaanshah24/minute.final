@@ -1,141 +1,190 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Faculty Dashboard{% endblock %}
+
 {% block content %}
-<style>
-    :root {
-        --primary-color: #6a0000;
-        --secondary-color: #8b0000;
-        --accent-color: #ffc107;
-        --glass-bg: rgba(255, 255, 255, 0.1);
-        --glass-border: rgba(255, 255, 255, 0.2);
-        --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .dashboard-header {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        color: var(--primary-color);
-        text-shadow: 0 0 10px rgba(106, 0, 0, 0.2);
-        margin-bottom: 2rem;
-    }
-
-    .dashboard-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--glass-border);
-        border-radius: 15px;
-        box-shadow: var(--shadow);
-        transition: all 0.3s ease-in-out;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .dashboard-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transform: rotate(45deg);
-        transition: all 0.5s ease;
-    }
-
-    .dashboard-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .dashboard-card:hover::before {
-        top: 50%;
-        left: 50%;
-    }
-
-    .dashboard-card .fas {
-        color: var(--primary-color);
-        transition: all 0.3s ease;
-    }
-
-    .dashboard-card:hover .fas {
-        transform: scale(1.2);
-        color: var(--accent-color);
-        filter: drop-shadow(0 0 10px var(--accent-color));
-    }
-
-    .dashboard-card .btn-primary {
-        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .dashboard-card .btn-primary:hover {
-        background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
-    }
-</style>
-
 <div class="container py-5">
-    <!-- Faculty Dashboard Header -->
-    <h2 class="dashboard-header text-center mb-4">
-        Welcome, {{ user.username }} <span class="text-uppercase" style="font-size: 0.8em;">(FACULTY)</span>
-    </h2>
+    <!-- Dashboard Header -->
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3 dashboard-title">
+            Welcome, {{ user.username }} <span class="text-muted fs-5">(Faculty)</span>
+        </h2>
+        <div class="header-divider"></div>
+    </div>
 
-    <!-- Faculty Actions -->
+    <!-- Faculty Operations -->
     <div class="row g-4">
+        <div class="col-12">
+            <h3 class="section-heading">Faculty Operations</h3>
+        </div>
+
         <!-- Create Minute -->
         <div class="col-md-4">
-            <div class="dashboard-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-edit fa-3x mb-3"></i>
-                    <h5 class="card-title">Create Minute</h5>
-                    <p class="card-text">Document important minutes with ease.</p>
-                    <a href="{% url 'minute:create' %}" class="btn btn-primary">Create Now</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-edit fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Create Minute</h5>
+                    <p class="card-text text-center">Document important minutes with ease.</p>
+                    <a href="#" class="btn btn-success w-100 mt-auto">Create Now</a>
                 </div>
             </div>
         </div>
 
-        <!-- Track Minute -->
+        <!-- Track Minutes -->
         <div class="col-md-4">
-            <div class="dashboard-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-search fa-3x mb-3"></i>
-                    <h5 class="card-title">Track Minutes</h5>
-                    <p class="card-text">Monitor the status of all submitted minutes.</p>
-                    <a href="{% url 'minute:track' %}" class="btn btn-primary">Track Now</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-search fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">Track Minutes</h5>
+                    <p class="card-text text-center">Monitor the status of submitted minutes.</p>
+                    <a href="#" class="btn btn-primary w-100 mt-auto">Track Now</a>
                 </div>
             </div>
         </div>
 
         <!-- View Archives -->
         <div class="col-md-4">
-            <div class="dashboard-card text-center p-4">
-                <div class="card-body">
-                    <i class="fas fa-archive fa-3x mb-3"></i>
-                    <h5 class="card-title">View Archives</h5>
-                    <p class="card-text">Access your personal archive of minutes.</p>
-                    <a href="{% url 'minute:archive' %}" class="btn btn-primary">View Archives</a>
+            <div class="card h-100 shadow-lg hover-card">
+                <div class="card-body d-flex flex-column align-items-center px-4 py-5">
+                    <div class="icon-container mb-4">
+                        <i class="fas fa-archive fa-3x"></i>
+                    </div>
+                    <h5 class="card-title mb-3">View Archives</h5>
+                    <p class="card-text text-center">Access your personal archive of minutes.</p>
+                    <a href="#" class="btn btn-secondary w-100 mt-auto">View Archives</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    // Add hover effects dynamically
-    document.querySelectorAll('.dashboard-card').forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.transform = `perspective(1000px) rotateX(${(y - rect.height/2)/20}deg) rotateY(${-(x - rect.width/2)/20}deg) translateY(-10px)`;
-        });
+<style>
+    :root {
+        --primary-color: #6a0000;
+        --text-dark: #2d3436;
+        --transition: all 0.3s ease-in-out;
+    }
 
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
-        });
-    });
-</script>
+    .dashboard-title {
+        color: var(--primary-color);
+        font-family: 'Montserrat', sans-serif;
+        padding-bottom: 1rem;
+    }
+
+    .header-divider {
+        width: 200px;
+        height: 3px;
+        background: var(--primary-color);
+        margin: 0 auto;
+    }
+
+    .hover-card {
+        transition: var(--transition);
+        background: #fff;
+        border-radius: 12px;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .icon-container {
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(106, 0, 0, 0.05);
+        border-radius: 50%;
+    }
+
+    .btn {
+        font-weight: 500;
+        transition: var(--transition);
+        border-radius: 8px;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-success {
+        background: #228B22;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #666;
+        color: white;
+    }
+
+    .section-heading {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+    }
+             /* 🌙 Fix Icons in Dark Mode */
+.dark-mode .icon-container i {
+    color: #ffcc00 !important; /* Brighter icon color */
+    filter: brightness(2); /* Boost visibility */
+}
+
+/* 🌙 Fix Card Text */
+.dark-mode .card-title,
+.dark-mode .card-text {
+    color: #ffffff !important; /* Ensures all text is bright */
+}
+
+/* 🌙 Fix Background for Icon Containers */
+.dark-mode .icon-container {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-radius: 50%;
+}
+/* ============================
+   🌙 Dark Mode Fixes for Dashboard
+   ============================ */
+.dark-mode .card {
+    background: rgba(40, 40, 40, 0.95) !important;
+    color: #f5f5f5 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dark-mode .card h5,
+.dark-mode .card p {
+    color: #f5f5f5 !important;
+}
+.dark-mode .btn-primary {
+    background: linear-gradient(90deg, #ff4444, #d32f2f) !important;
+    color: #fff !important;
+    border: none;
+}
+.dark-mode .btn-primary:hover {
+    background: linear-gradient(90deg, #d32f2f, #ff4444) !important;
+}
+.dark-mode .icon-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+.dark-mode .icon-container i {
+    filter: brightness(1.8);
+}
+.dark-mode .dashboard-title {
+    color: #ffcc00 !important;
+}
+.dark-mode .section-heading {
+    color: #ffcc00 !important;
+}
+.dark-mode .section-heading::before {
+    background: #ffcc00 !important;
+}
+.dark-mode .shape-fill {
+    fill: #222 !important;
+}
+</style>
 {% endblock %}

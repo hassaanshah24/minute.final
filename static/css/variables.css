@@ -1,0 +1,17 @@
+:root {
+    /* ✅ Light Theme Colors */
+    --color-text: #2d3748;        /* Dark gray text */
+    --color-bg: #ffffff;          /* White background */
+    --color-card: #f8f9fa;        /* Light gray cards */
+    --color-input: #e2e8f0;       /* Soft gray input fields */
+    --color-primary: #B22222;     /* Brand red */
+    --color-placeholder: #6b7280; /* Light placeholder */
+
+    /* ✅ Dark Theme Overrides */
+    --dark-color-text: #f8f9fa;   /* White text */
+    --dark-color-bg: #121212;     /* Dark background */
+    --dark-color-card: #1e1e1e;   /* Darker gray cards */
+    --dark-color-input: #333333;  /* Dark input fields */
+    --dark-color-primary: #ff4444; /* Brighter red */
+    --dark-color-placeholder: #b3b3b3; /* Gray placeholder */
+}

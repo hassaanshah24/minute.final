@@ -1,0 +1,15 @@
+/* ✅ Apply Dark Mode Colors */
+.dark-mode {
+    --color-text: var(--dark-color-text);
+    --color-bg: var(--dark-color-bg);
+    --color-card: var(--dark-color-card);
+    --color-input: var(--dark-color-input);
+    --color-primary: var(--dark-color-primary);
+    --color-placeholder: var(--dark-color-placeholder);
+}
+
+/* ✅ Apply Background & Text */
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
