@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}View Official Minute Sheet{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">View Official Minute Sheet</h2>
+        <div>
+            <a href="#" class="btn btn-secondary">Back to Minutes</a>
+            <button class="btn btn-primary" onclick="downloadMinuteAsPDF()">Download as PDF</button>
+        </div>
+    </div>
+
+    <!-- ✅ Includes Official `minutesheet.html` -->
+    {% include "minute/minute_sheet.html" with minute=minute current_description=current_description current_page=current_page total_pages=total_pages %}
+
+    <!-- 🔥 Pagination for Multi-Page Description -->
+    {% if total_pages > 1 %}
+        <div class="mt-4 d-flex justify-content-between">
+            {% if current_page > 1 %}
+                <a href="?page={{ current_page|add:-1 }}" class="btn btn-secondary">&lt; Prev</a>
+            {% else %}
+                <button class="btn btn-secondary" disabled>&lt; Prev</button>
+            {% endif %}
+            {% if current_page < total_pages %}
+                <a href="?page={{ current_page|add:1 }}" class="btn btn-primary">Next &gt;</a>
+            {% else %}
+                <button class="btn btn-primary" disabled>Next &gt;</button>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function downloadMinuteAsPDF() {
+        alert("PDF Download Feature Coming Soon!");
+    }
+</script>
+{% endblock %}

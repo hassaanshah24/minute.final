@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "apps.users",
+    "apps.minute",
     "apps.departments",
     "widget_tweaks",
     "rest_framework",
@@ -75,7 +76,9 @@ INSTALLED_APPS = [
     "corsheaders",
     "axes",  # Security against brute-force attacks
     "ckeditor",# Rich text editor (Fixed CKEditor issue)
+    "ckeditor_uploader",
     'apps.approval_chain',
+    "django_extensions",
 ]
 
 # ✅ *Middleware*
@@ -230,3 +233,11 @@ SPECTACULAR_SETTINGS = {
 AXES_FAILURE_LIMIT = 10  # Increase the failure limit before lockout
 AXES_COOLOFF_TIME = None  # Remove automatic cooldown
 AXES_RESET_ON_SUCCESS = True  # Reset failed attempts on successful login
+
+
+# settings.py
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# ✅ Define the CKEditor upload path
+CKEDITOR_UPLOAD_PATH = "uploads/ckeditor/"

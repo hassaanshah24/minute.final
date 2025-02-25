@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Personal Archive{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">My Archived Minutes</h2>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Subject</th>
+                <th>Unique ID</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for minute in minutes %}
+            <tr>
+                <td>{{ minute.subject }}</td>
+                <td>{{ minute.unique_id }}</td>
+                <td><span class="badge bg-secondary">Archived</span></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-center text-muted">No archived minutes.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

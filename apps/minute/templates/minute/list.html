@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}My Minutes{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">My Minutes</h2>
+    <a href="{% url 'minute:create' %}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus-circle"></i> Create New Minute
+    </a>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Subject</th>
+                <th>Unique ID</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for minute in minutes %}
+            <tr>
+                <td>{{ minute.subject }}</td>
+                <td>{{ minute.unique_id }}</td>
+                <td>
+                    <span class="badge bg-{% if minute.status == 'Pending' %}warning{% elif minute.status == 'Approved' %}success{% else %}danger{% endif %}">
+                        {{ minute.status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'minute:detail' minute.id %}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center text-muted">No minutes found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

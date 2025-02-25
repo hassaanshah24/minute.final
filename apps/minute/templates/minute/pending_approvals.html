@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Pending Approvals{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center fw-bold">Pending Minutes for Approval</h1>
+    <p class="text-muted text-center">Below are the minutes that require your approval.</p>
+
+    {% if pending_approvals %}
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-hover text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Minute ID</th>
+                        <th>Subject</th>
+                        <th>Department</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
+                        <th>Approval Chain</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for minute in pending_approvals %}
+                        <tr>
+                            <td>{{ minute.unique_id }}</td>
+                            <td>{{ minute.subject }}</td>
+                            <td>{{ minute.department.name }}</td>
+                            <td>{{ minute.created_by.get_full_name }}</td>
+                            <td>{{ minute.created_at|date:"jS F, Y" }}</td>
+                            <td>
+                                {% for approver in minute.approval_chain.approvers.all %}
+                                    {% if approver.is_current %}
+                                        <strong>{{ approver.user.get_full_name }}</strong> (Pending)
+                                    {% else %}
+                                        {{ approver.user.get_full_name }}
+                                    {% endif %}
+                                    {% if not forloop.last %} → {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a href="{% url 'minute:action' minute.id %}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-right"></i> Open
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center text-muted mt-4">No pending approvals at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

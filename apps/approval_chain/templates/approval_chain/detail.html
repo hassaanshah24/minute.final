@@ -54,10 +54,17 @@
         <a href="{% url 'approval_chain:delete' approval_chain.id %}" class="btn btn-danger">
             <i class="fas fa-trash"></i> Delete Chain
         </a>
-          <!-- ✅ "OK" Button to Confirm Finalization -->
-        <a href="{% url 'approval_chain:confirm' approval_chain.id %}" class="btn btn-success">
-            <i class="fas fa-check"></i> OK
-        </a>
+
+        <!-- ✅ "OK" Button to Confirm Finalization and Redirect to Minute Detail -->
+        {% if approval_chain.minute %}
+            <a href="{% url 'minute:detail' approval_chain.minute.id %}" class="btn btn-success">
+                <i class="fas fa-check"></i> OK
+            </a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>
+                <i class="fas fa-ban"></i> No Linked Minute
+            </button>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

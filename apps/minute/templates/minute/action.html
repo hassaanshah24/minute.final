@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Minute Actions{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- ✅ Page Heading -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Minute Approval Actions</h1>
+        <p class="text-muted">You are the active approver. Please take action on this minute.</p>
+    </div>
+
+    <!-- ✅ Display the Minute as a Paper Document -->
+    {% include "minute/minute_sheet.html" with minute=minute current_description=current_description current_page=current_page total_pages=total_pages %}
+
+    <!-- ✅ Approval Action Panel -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0">Take Action on Minute</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted text-center mb-3">
+                You are reviewing this minute as <strong>{{ current_approver.user.get_full_name }}</strong> (Order {{ current_approver.order }})
+            </p>
+
+            <!-- ✅ FORM to Handle All Actions -->
+            <form id="action-form" method="post">
+                {% csrf_token %}
+
+                <!-- ✅ Hidden Input for Action Type -->
+                <input type="hidden" id="action-type" name="action" value="">
+
+                <!-- ✅ Action Buttons -->
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <button type="button" class="btn btn-success btn-lg action-btn" data-action="approve">
+                        ✅ Approve
+                    </button>
+                    <button type="button" class="btn btn-danger btn-lg action-btn" data-action="reject">
+                        ❌ Reject
+                    </button>
+                </div>
+
+                <!-- 🔄 Mark-To (Send to a New Approver) -->
+                <div class="mt-4 p-3 border rounded">
+                    <h5 class="fw-bold">🔄 Mark-To (Assign to Another Approver)</h5>
+                    <p class="text-muted">Select a user and assign them a position in the approval chain.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ mark_form.user.label_tag }}
+                            {{ mark_form.user }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ mark_form.order.label_tag }}
+                            {{ mark_form.order }}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-3 action-btn" data-action="mark_to">Mark To</button>
+                </div>
+
+                <!-- ⏪ Return-To (Send Back to a Previous Approver) -->
+                <div class="mt-4 p-3 border rounded">
+                    <h5 class="fw-bold">⏪ Return-To (Send Back to a Previous Approver)</h5>
+                    <p class="text-muted">Select a previous approver to send the minute back to them.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ return_form.user.label_tag }}
+                            {{ return_form.user }}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-warning mt-3 action-btn" data-action="return_to">Return To</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- ✅ SIMPLE JavaScript to Handle Button Clicks -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".action-btn").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();  // Prevent default behavior
+
+            // ✅ Set action type
+            document.getElementById("action-type").value = this.getAttribute("data-action");
+
+            // ✅ Submit form normally (No AJAX)
+            document.getElementById("action-form").submit();
+        });
+    });
+});
+</script>
+
+{% endblock %}

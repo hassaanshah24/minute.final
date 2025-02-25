@@ -1,3 +1,4 @@
+# apps/users/urls.py (Inside Users App)
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
@@ -13,6 +14,7 @@ from .views import (
     profile_edit_view,
 )
 
+# ✅ Set the app namespace (This ensures unique namespacing)
 app_name = 'users'
 
 urlpatterns = [

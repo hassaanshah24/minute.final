@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Minute Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center">{{ minute.subject }}</h2>
+    <p class="text-muted text-center">Unique ID: {{ minute.unique_id }}</p>
+
+    <h4 class="mt-4">Approval Chain</h4>
+    <ul class="list-group">
+        {% for approver in approvers %}
+        <li class="list-group-item {% if approver.is_current %}active{% endif %}">
+            {{ approver.user.get_full_name }} - 
+            <strong>{{ approver.status }}</strong>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% if is_current_approver %}
+    <div class="mt-4">
+        <a href="{% url 'minute:approve' minute.id %}" class="btn btn-success">
+            <i class="fas fa-check-circle"></i> Approve
+        </a>
+        <a href="{% url 'minute:mark_to' minute.id %}" class="btn btn-warning">
+            <i class="fas fa-share"></i> Mark-To
+        </a>
+        <a href="{% url 'minute:return_to' minute.id %}" class="btn btn-danger">
+            <i class="fas fa-reply"></i> Return-To
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

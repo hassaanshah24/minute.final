@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Official Minute Sheet{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Page Title -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-uppercase">Create Official Minute Sheet</h1>
+        <p class="text-muted">Ensure that all details follow the official format and university guidelines.</p>
+    </div>
+
+    <!-- Display Validation Errors -->
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li><strong>{{ field|title }}</strong>: {{ errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Official Minute Sheet Container -->
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h2 class="mb-0 fw-bold">OFFICIAL MINUTE SHEET</h2>
+        </div>
+        <div class="card-body px-5 py-4">
+            <form method="post" enctype="multipart/form-data" id="minute-form">
+                {% csrf_token %}
+
+                <!-- University Header -->
+                <div class="text-center mb-4">
+                    <h5 class="fw-bold">Pakistan Defence Officers Housing Authority, Karachi - 75500</h5>
+                    <h6 class="text-uppercase fw-bold">DHA Suffa University</h6>
+                    <p class="text-muted">Off Khayaban-e-Tufail, Phase VII (Extension), DHA, Karachi – 75500</p>
+                    <hr class="border-2">
+                </div>
+
+                <!-- Document Numbering -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="fs-5"><strong>Minute ID:</strong> {{ form.unique_id.value|default_if_none:"Auto-Generated" }}</span>
+                    <span class="fs-5"><strong>Sheet No:</strong> {{ form.sheet_no.value|default_if_none:"Auto-Generated" }}</span>
+                </div>
+
+                <!-- Subject -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Subject:</label>
+                    <input type="text"
+                           name="subject"
+                           class="form-control"
+                           placeholder="Enter the subject of the minute"
+                           value="{{ form.subject.value|default_if_none:'' }}"
+                           required>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Minute Details:</label>
+                    <textarea name="description"
+                              class="form-control"
+                              placeholder="Enter detailed minute content..."
+                              rows="6"
+                              required>{{ form.description.value|default_if_none:'' }}</textarea>
+                </div>
+
+                <!-- Attachments -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Upload Attachments (if any):</label>
+                    <input type="file" name="attachment" class="form-control">
+                    {% if minute and minute.attachment %}
+                        <p class="mt-2">
+                            <a href="{{ minute.attachment.url }}" target="_blank" class="text-primary">View Current Attachment</a>
+                        </p>
+                    {% endif %}
+                </div>
+
+                <!-- Approval Chain Redirection Info -->
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle"></i> Once submitted, you will be redirected to create an approval chain.
+                </div>
+
+                <!-- Submission Actions -->
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-success px-4 py-2">
+                        <i class="fas fa-paper-plane"></i> Submit for Approval
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Client-side Validation & Confirmation -->
+<script>
+    document.getElementById("minute-form").addEventListener("submit", function(event) {
+        if (!confirm("Are you sure you want to submit this minute sheet for approval?")) {
+            event.preventDefault();
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Tracking Minute - {{ minute.unique_id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- ✅ Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Tracking Minute</h1>
+        <p class="text-muted">Follow the approval process in real-time.</p>
+    </div>
+
+    <!-- ✅ Show Minute Sheet -->
+    {% include "minute/minute_sheet.html" with minute=minute %}
+
+    <!-- ✅ Live Approval Chain Status -->
+    <div class="mt-4 p-4 border rounded shadow-sm">
+        <h5 class="fw-bold">Approval Chain Status:</h5>
+        <div id="approval-chain-visualization">
+            {% if approvers_status %}
+                <p class="fw-bold">
+                    {% for approver in approvers_status %}
+                        {% if approver.is_current %}
+                            <span class="text-primary fw-bold">
+                                {{ approver.approver }} ({{ approver.status }})
+                            </span>
+                        {% elif approver.status == "Approved" %}
+                            <span class="text-success">
+                                {{ approver.approver }} ({{ approver.status }})
+                            </span>
+                        {% elif approver.status == "Rejected" %}
+                            <span class="text-danger">
+                                {{ approver.approver }} ({{ approver.status }})
+                            </span>
+                        {% else %}
+                            <span>{{ approver.approver }} ({{ approver.status }})</span>
+                        {% endif %}
+                        {% if not forloop.last %} → {% endif %}
+                    {% endfor %}
+                </p>
+            {% else %}
+                <p class="text-muted">No approvers found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ✅ Show Current Approver -->
+    {% if current_approver %}
+        <div class="mt-4 text-center">
+            <h5 class="text-info fw-bold">
+                Current Approver: {{ current_approver.approver }}
+            </h5>
+        </div>
+    {% endif %}
+
+    <!-- ✅ Auto Redirect to Archive If Finalized -->
+    {% if is_finalized %}
+    <script>
+        setTimeout(() => {
+            window.location.href = "#"; // 🔥 Redirect to archive
+        }, 3000); // ✅ Wait 3 seconds before redirect
+    </script>
+    {% endif %}
+
+</div>
+
+<!-- ✅ Auto-Update Approval Chain Every 5 Seconds -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const minuteId = "{{ minute.id }}";
+    const progressContainer = document.getElementById("approval-chain-visualization");
+
+    async function fetchApprovalProgress() {
+        try {
+            const response = await fetch(`/minutes/api/approval_status/${minuteId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                updateApprovalProgress(data.approval_chain);
+            } else {
+                console.error("Failed to fetch approval status.");
+            }
+        } catch (error) {
+            console.error("Error fetching approval status:", error);
+        }
+    }
+
+    function updateApprovalProgress(approversStatus) {
+        progressContainer.innerHTML = "";
+
+        if (!approversStatus || approversStatus.length === 0) {
+            progressContainer.innerHTML = `<p class="text-danger">No approval data available.</p>`;
+            return;
+        }
+
+        let approvalText = approversStatus
+            .map(approver => {
+                if (approver.is_current) {
+                    return `<span class="text-primary fw-bold">${approver.approver} (${approver.status})</span>`;
+                } else if (approver.status === "Approved") {
+                    return `<span class="text-success">${approver.approver} (${approver.status})</span>`;
+                } else if (approver.status === "Rejected") {
+                    return `<span class="text-danger">${approver.approver} (${approver.status})</span>`;
+                } else {
+                    return `<span>${approver.approver} (${approver.status})</span>`;
+                }
+            })
+            .join(" → ");
+
+        progressContainer.innerHTML = `<p class="fw-bold">${approvalText}</p>`;
+    }
+
+    // ✅ Auto-Refresh Approval Chain Every 5 Seconds
+    setInterval(fetchApprovalProgress, 5000);
+    fetchApprovalProgress();
+});
+</script>
+
+{% endblock %}
