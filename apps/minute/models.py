@@ -2,8 +2,11 @@
 from django.db import models, transaction
 from django.utils.timezone import now
 from django.contrib.auth import get_user_model
-from django.apps import apps  # ✅ Lazy import to prevent circular import
+from django.apps import apps
 from django.core.exceptions import ValidationError
+from django.db.models import F
+
+from apps.approval_chain.models import Approver
 
 User = get_user_model()
 
@@ -67,6 +70,12 @@ class Minute(models.Model):
         null=True,
         blank=True,
         help_text="The approval chain linked to this minute."
+    )
+    attachment = models.FileField(
+        upload_to="minute_attachments/",
+        blank=True,
+        null=True,
+        help_text="Optional attachment (PDF, image, Word, Excel, etc.)."
     )
 
     class Meta:
@@ -167,16 +176,52 @@ class Minute(models.Model):
         self.finalize_minute("Rejected")
 
     @transaction.atomic
-    def mark_to(self, approver, target_user):
+    def mark_to(self, approver, target_user, target_order=None):
         """
         Marks the minute to another user, inserting them into the approval chain.
+        - If an approver already exists at the target order, shift all subsequent approvers down.
+        - Ensures only one approver remains active.
         """
+        # ✅ Ensure the user making this action is the current approver
         current_approver = self.approval_chain.approvers.filter(user=approver, is_current=True).first()
 
         if not current_approver:
             raise ValidationError("You are not authorized to mark this minute to another user.")
 
-        self.approval_chain.mark_to(target_user)
+        if self.approval_chain.approvers.filter(user=target_user).exists():
+            raise ValidationError(f"{target_user.get_full_name()} is already in the approval chain.")
+
+        max_order = self.approval_chain.approvers.aggregate(models.Max("order"))["order__max"] or 0
+        target_order = target_order or max_order + 1  # Default to next available order
+
+        # ✅ If inserting in the middle, shift subsequent orders down
+        if target_order <= max_order:
+            self.approval_chain.approvers.filter(order__gte=target_order).update(order=F("order") + 1)
+
+        # ✅ Create new approver
+        new_approver = Approver.objects.create(
+            approval_chain=self.approval_chain,
+            user=target_user,
+            order=target_order,
+            status="Pending",
+            is_current=False  # Default to inactive
+        )
+
+        # ✅ Update the current approver's status
+        current_approver.status = "Marked"
+        current_approver.is_current = False
+        current_approver.save()
+
+        # ✅ Ensure only one approver remains active
+        next_approver = self.approval_chain.approvers.filter(order__gt=self.order, status="Pending").order_by(
+            "order").first()
+
+        if next_approver:
+            next_approver.is_current = True
+            next_approver.save()
+        else:
+            new_approver.is_current = True  # If no next approver, activate the new one
+            new_approver.save()
 
     @transaction.atomic
     def return_to(self, approver, target_user):
@@ -188,7 +233,23 @@ class Minute(models.Model):
         if not current_approver:
             raise ValidationError("You are not authorized to return this minute.")
 
-        self.approval_chain.return_to(target_user)
+        previous_approver = self.approval_chain.approvers.filter(user=target_user,
+                                                                 order__lt=current_approver.order).first()
+
+        if not previous_approver:
+            raise ValidationError("The selected user is not a previous approver.")
+
+        # ✅ Deactivate the current approver
+        current_approver.is_current = False
+        current_approver.status = "Returned"
+        current_approver.save()
+
+        # ✅ Reactivate the previous approver only if necessary
+        if previous_approver.status != "Pending":
+            previous_approver.status = "Pending"
+
+        previous_approver.is_current = True
+        previous_approver.save()
 
     @transaction.atomic
     def archive(self):

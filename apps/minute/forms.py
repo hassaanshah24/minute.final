@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from apps.minute.models import Minute
 from apps.approval_chain.models import Approver, ApprovalChain
+from django.db import models
+
 
 User = get_user_model()
 
@@ -18,7 +20,7 @@ class MinuteForm(forms.ModelForm):
 
     class Meta:
         model = Minute
-        fields = ["subject", "description"]  # ✅ Only required fields
+        fields = ["subject", "description", "attachment"]  # ✅ Now includes attachment
         widgets = {
             "subject": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter subject"}),
             "description": forms.Textarea(
@@ -104,24 +106,27 @@ class ApprovalActionForm(forms.Form):
         else:
             self.minute.reject(self.user)
 
+from django.db.models import F
 
-# ✅ Mark-To Form (Assigns a new approver)
+
 class MarkToForm(forms.Form):
     """
     Allows the current approver to assign the minute to a new approver.
-    Excludes the minute creator and existing approvers.
+    Excludes the minute creator, existing approvers, and already approved users.
     """
+
     user = forms.ModelChoiceField(
         queryset=User.objects.none(),
         label="Select New Approver",
         help_text="Choose a user to forward this minute to.",
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(attrs={"class": "form-control", "required": "required"}),  # ✅ Ensures proper form submission
     )
+
     order = forms.IntegerField(
         min_value=1,
         label="Approval Order",
         help_text="Select the order in which the new approver should be placed.",
-        widget=forms.NumberInput(attrs={"class": "form-control"}),
+        widget=forms.NumberInput(attrs={"class": "form-control", "required": "required"}),  # ✅ Ensures required field
     )
 
     def __init__(self, *args, **kwargs):
@@ -129,28 +134,46 @@ class MarkToForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         if self.approval_chain:
+            # ✅ Exclude: Minute Creator, Existing Approvers, & Already Approved Users
             existing_approvers = self.approval_chain.approvers.values_list("user_id", flat=True)
-            self.fields["user"].queryset = User.objects.exclude(id__in=existing_approvers).exclude(
-                id=self.approval_chain.created_by.id
-            )
+            already_approved_users = self.approval_chain.approvers.filter(status="Approved").values_list("user_id", flat=True)
 
-    def clean(self):
-        """
-        Validates the selected user and order.
-        """
-        cleaned_data = super().clean()
-        target_user = cleaned_data.get("user")
-        target_order = cleaned_data.get("order")
+            self.fields["user"].queryset = User.objects.exclude(
+                id__in=list(existing_approvers) + list(already_approved_users)
+            ).exclude(id=self.approval_chain.created_by.id)
 
-        if not target_user:
+    def clean_user(self):
+        """
+        Ensures that a valid user is selected and that they are not already in the approval chain.
+        Fixes cases where an empty string is appended in POST data.
+        """
+        user = self.cleaned_data.get("user")
+
+        # ✅ Fix: If user is coming as a list, extract only valid IDs
+        if isinstance(user, list):
+            user = next((u for u in user if u), None)  # Get first valid user, ignore empty values
+
+        if not user:
             raise ValidationError("Please select a valid user.")
 
-        # Ensure the order is valid and does not disrupt existing flow
-        max_existing_order = self.approval_chain.approvers.aggregate(models.Max("order"))["order__max"] or 0
-        if target_order > max_existing_order + 1:
-            raise ValidationError(f"Invalid order. Maximum allowed order is {max_existing_order + 1}.")
+        if self.approval_chain.approvers.filter(user=user).exists():
+            raise ValidationError(f"{user.get_full_name()} is already an approver.")
 
-        return cleaned_data
+        return user
+
+    def clean_order(self):
+        """
+        Ensures the order number is within the valid range.
+        """
+        order = self.cleaned_data.get("order")
+
+        # ✅ Get max existing order, default to 0 if none exist
+        max_existing_order = self.approval_chain.approvers.aggregate(models.Max("order"))["order__max"] or 0
+
+        if order > max_existing_order + 1:
+            raise ValidationError(f"Invalid order. Maximum order allowed is {max_existing_order + 1}.")
+
+        return order
 
     def save(self, current_approver):
         """
@@ -159,21 +182,26 @@ class MarkToForm(forms.Form):
         target_user = self.cleaned_data["user"]
         target_order = self.cleaned_data["order"]
 
-        # ✅ Insert New Approver
+        # ✅ Ensure existing orders are shifted correctly
+        if self.approval_chain.approvers.filter(order=target_order).exists():
+            self.approval_chain.approvers.filter(order__gte=target_order).update(order=F("order") + 1)
+
+        # ✅ Insert New Approver (New approver should be active)
         new_approver = Approver.objects.create(
             approval_chain=self.approval_chain,
             user=target_user,
             order=target_order,
             status="Pending",
-            is_current=False  # ✅ New approver starts as "Pending"
+            is_current=True  # ✅ New approver takes control
         )
 
-        # ✅ Reorder all subsequent approvers to maintain sequence
-        for approver in self.approval_chain.approvers.filter(order__gte=target_order).exclude(pk=new_approver.pk):
-            approver.order += 1
-            approver.save()
+        # ✅ Update Current Approver (Mark them as "Marked" & Deactivate)
+        current_approver.status = "Marked"
+        current_approver.is_current = False
+        current_approver.save()
 
         return new_approver
+
 
 
 # ✅ Return-To Form (Reverts the minute to a previous approver)

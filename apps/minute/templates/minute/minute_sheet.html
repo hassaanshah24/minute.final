@@ -23,14 +23,8 @@
 
             <!-- Minute ID & Sheet Number -->
             <div class="d-flex justify-content-between fw-bold mt-4 mb-5">
-                <span class="text-decoration-underline" style="font-size: 20px;">DHA/DSU/CS/{{ minute.unique_id }}</span>
-                <span class="ms-5" style="font-size: 20px;">Sheet: <span style="text-decoration: underline;">{{ minute.sheet_number }}</span></span>
-            </div>
+                <span class="text-decoration-underline" style="font-size: 20px;">{{ minute.unique_id }}</span>
 
-            <!-- Title -->
-            <div class="mb-4">
-                <label class="form-label fw-bold" style="font-size: 22px;">Title:</label>
-                <span class="fs-5 fw-normal" style="font-size: 20px;">{{ minute.title }}</span>
             </div>
 
             <!-- Subject -->
@@ -43,11 +37,6 @@
             <div class="mb-4">
                 <label class="form-label fw-bold" style="font-size: 22px;">Description:</label>
                 <p class="text-justify" style="font-size: 20px;">{{ current_description|linebreaks }}</p>
-            </div>
-
-            <!-- 📄 Page Number -->
-            <div class="text-center fw-bold mt-4">
-                Page {{ current_page }} of {{ total_pages }}
             </div>
 
             <!-- Attachments -->
@@ -70,7 +59,6 @@
 
             <!-- ✅ Approval Chain -->
             <div class="mt-4 text-start">
-                <h5 class="fw-bold">Approval Chain:</h5>
                 <div id="approval-chain-visualization">
                     {% if approvers_status %}
                         <p class="fw-bold">
@@ -91,23 +79,28 @@
                 </div>
             </div>
 
-            <!-- 🔥 Remarks Section (Placeholder for Future Integration) -->
-            <div class="mt-4">
-                <ul class="list-group">
-                    {% for approver in approvers_status %}
-                        {% if approver.remarks %}
-                            <li class="list-group-item">
-                                <strong>{{ approver.approver }}:</strong>
-                                <em>{{ approver.remarks }}</em>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-                {% if not approvers_status %}
-                    <p class="text-muted">No remarks available.</p>
-                {% endif %}
-            </div>
+          <!-- ✅ Remarks Section -->
+<div class="mt-4">
+    {% if remarks %}
+        {% for remark in remarks %}
+        <div class="p-3 mb-3 border-start border-4" style="border-color: #333;">
+            <p class="mb-1">
+                <strong>{{ remark.user.get_full_name }}</strong>
+                <em>({{ remark.action }})</em> -
+                <span class="text-muted">{{ remark.timestamp|date:"jS F, Y H:i" }}</span>
+            </p>
+            <p class="mb-0">{{ remark.text|default:"No remarks provided." }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No remarks available.</p>
+    {% endif %}
+</div>
 
+            <!-- 📄 Page Number -->
+            <div class="text-center fw-bold mt-4">
+                Page {{ current_page }} of {{ total_pages }}
+            </div>
         </div>
     </div>
 </div>

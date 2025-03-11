@@ -1,0 +1,213 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minute Sheet</title>
+
+    <style>
+        /* ✅ Standard A4 layout with proper margins */
+        @page {
+            size: A4;
+            margin: 0.7in 0.8in 0.7in 0.8in;
+
+            /* ✅ Page Numbering */
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 10pt;
+                font-family: "Times New Roman", serif;
+            }
+
+            /* ✅ Correct Sheet Numbering */
+            @top-right {
+                content: "Sheet: " counter(page);
+                font-weight: bold;
+                font-size: 12pt;
+                font-family: "Times New Roman", serif;
+            }
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12pt;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .minute-sheet {
+            width: 100%;
+            min-height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* ✅ Header Styling */
+        .header {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .header h4 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .header h2 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 0px;
+        }
+
+        .header p {
+            font-size: 12pt;
+            color: grey;
+            margin-top: 2px;
+            margin-bottom: 3px;
+        }
+
+        hr {
+            border: 1px solid black;
+            width: 100%;
+            margin: 3px 0;
+        }
+
+        .content-section {
+            margin-top: 15px;
+        }
+
+        .text-bold {
+            font-weight: bold;
+        }
+
+        .text-underline {
+            text-decoration: underline;
+        }
+
+        .text-justify {
+            text-align: justify;
+        }
+
+        .text-end {
+            text-align: right;
+        }
+
+        .fst-italic {
+            font-style: italic;
+        }
+
+        /* ✅ Approval Chain Formatting */
+        .approval-chain {
+            margin-top: 15px;
+            font-size: 11pt;
+        }
+
+        .approval-chain span {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        /* ✅ Table Formatting */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .table td, .table th {
+            padding: 6px;
+            text-align: left;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+
+<div class="minute-sheet">
+    <div id="minute-content">
+
+        <!-- ✅ Fixed Header -->
+        <div class="header">
+            <h4>Pakistan Defence Officers Housing Authority, Karachi – 75500</h4>
+            <h2>DHA Suffa University</h2>
+            <p>Off Khayaban-e-Tufail, Phase VII (Extension), DHA, Karachi – 75500</p>
+            <hr>
+        </div>
+
+        <!-- ✅ Minute Sheet Heading -->
+        <h2 class="text-bold text-underline" style="text-align: center;">Minute Sheet</h2>
+
+        <!-- ✅ Minute ID -->
+        <div class="text-bold" style="display: flex; justify-content: space-between; margin-top: 15px;">
+            <span class="text-underline">DHA/DSU/CS/{{ minute.unique_id }}</span>
+        </div>
+
+        <!-- ✅ Subject -->
+        <div class="content-section">
+            <label class="text-bold">Subject:</label>
+            <span class="text-underline">{{ minute.subject }}</span>
+        </div>
+
+        <!-- ✅ Description -->
+        <div class="content-section">
+            <label class="text-bold">Description:</label>
+            <p class="text-justify">{{ minute.description|linebreaks }}</p>
+        </div>
+
+        <!-- ✅ Created By -->
+        <div class="text-end fst-italic content-section">
+            <p class="text-bold">{{ minute.created_by.get_full_name|default:minute.created_by.username|default:"Unknown User" }}</p>
+            <p>
+                {{ minute.created_by.designation|default:"Designation Not Assigned" }},
+                {{ minute.created_by.department.code|default:minute.created_by.department.name|default:"Dept Not Assigned" }}
+            </p>
+            <p>{{ minute.created_at|date:"jS F, Y" }}</p>
+        </div>
+
+        <!-- ✅ Approval Chain -->
+        <div class="approval-chain">
+            {% if approvers_status %}
+                <p class="text-bold">
+                    {% for approver in approvers_status %}
+                        <span {% if approver.status == "Approved" %}style="color: grey;"{% elif approver.is_current %}style="color: blue;"{% endif %}>
+                            {{ approver.approver }} ({{ approver.status }})
+                        </span>
+                        {% if not forloop.last %} → {% endif %}
+                    {% endfor %}
+                </p>
+            {% else %}
+                <p class="text-danger">No approval data available.</p>
+            {% endif %}
+        </div>
+
+        <!-- ✅ Remarks Section -->
+<div class="mt-4">
+    {% if remarks %}
+        {% for remark in remarks %}
+        <div style="margin-bottom: 12px; padding: 10px; border-left: 4px solid #333;">
+            <p style="margin: 0;">
+                <strong>{{ remark.user.get_full_name }}</strong>
+                <em>({{ remark.text|default:"No remarks provided." }})</em> -
+                <span style="color: gray;">{{ remark.timestamp|date:"jS F, Y H:i" }}</span>
+            </p>
+            <p style="margin-top: 5px;"></p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No remarks available.</p>
+    {% endif %}
+</div>
+
+
+        <!-- ✅ Attachments -->
+        {% if minute.attachment %}
+        <div class="content-section">
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

@@ -49,9 +49,11 @@ class ApprovalChainForm(forms.ModelForm):
 
 
 # ✅ Form to Add a Single Approver
+from django.db.models import F
+
 class ApproverForm(forms.ModelForm):
     """
-    Form to add a single approver to an Approval Chain.
+    Form to add a single approver to an Approval Chain (Supports Mark-To Functionality).
     """
 
     user = forms.ModelChoiceField(
@@ -77,47 +79,50 @@ class ApproverForm(forms.ModelForm):
         self.approval_chain = kwargs.pop("approval_chain", None)
         super().__init__(*args, **kwargs)
 
-        # Auto-assign the next available order if not manually assigned
         if self.approval_chain:
             existing_orders = self.approval_chain.approvers.values_list("order", flat=True)
             suggested_order = max(existing_orders, default=0) + 1
             self.fields["order"].initial = suggested_order
 
-        # ✅ Ensure the dropdown does not show users already in the approval chain
+        # ✅ Exclude: Minute Creator, Existing Approvers, & Already Approved Users
         if self.approval_chain:
             existing_users = self.approval_chain.approvers.values_list("user", flat=True)
-            self.fields["user"].queryset = User.objects.exclude(id__in=existing_users)
+            already_approved_users = self.approval_chain.approvers.filter(status="Approved").values_list("user", flat=True)
 
-    def clean_user(self):
+            self.fields["user"].queryset = User.objects.exclude(
+                id__in=list(existing_users) + list(already_approved_users)
+            ).exclude(id=self.approval_chain.created_by.id)
+
+    def clean(self):
         """
-        Ensure the selected user is not already an approver.
+        Validates the selected user and order.
         """
-        user = self.cleaned_data.get("user")
+        cleaned_data = super().clean()
+        target_user = cleaned_data.get("user")
+        target_order = cleaned_data.get("order")
 
-        if self.approval_chain and Approver.objects.filter(approval_chain=self.approval_chain, user=user).exists():
-            raise ValidationError(f"{user.get_full_name()} is already an approver in this chain.")
+        if not target_user:
+            raise ValidationError("Please select a valid user.")
 
-        return user
+        # ✅ Ensure target_order is valid
+        max_existing_order = self.approval_chain.approvers.aggregate(Max("order"))["order__max"] or 0
+        if target_order > max_existing_order + 1:
+            raise ValidationError(f"Invalid order. Maximum order allowed is {max_existing_order + 1}.")
 
-    def clean_order(self):
-        """
-        Ensure the order number is unique within the approval chain.
-        """
-        order = self.cleaned_data.get("order")
-
-        if self.approval_chain and Approver.objects.filter(approval_chain=self.approval_chain, order=order).exists():
-            raise ValidationError(f"An approver with order {order} already exists.")
-
-        return order
+        return cleaned_data
 
     def save(self, commit=True):
         """
-        Assign the approval chain before saving.
+        Saves the Mark-To action by inserting a new approver.
         """
         instance = super().save(commit=False)
 
         if self.approval_chain:
             instance.approval_chain = self.approval_chain
+
+            # ✅ Shift existing approvers down when inserting a new approver
+            if self.approval_chain.approvers.filter(order=instance.order).exists():
+                self.approval_chain.approvers.filter(order__gte=instance.order).update(order=F("order") + 1)
 
         if commit:
             instance.save()

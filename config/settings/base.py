@@ -4,6 +4,8 @@ import os
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
+os.add_dll_directory("C:/GTK/bin")
+
 # ✅ *Base directory path*
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -68,17 +70,17 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.minute",
     "apps.departments",
+    "apps.remarks",
     "widget_tweaks",
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_spectacular",  # API Documentation
     "channels",
     "corsheaders",
-    "axes",  # Security against brute-force attacks
-    "ckeditor",# Rich text editor (Fixed CKEditor issue)
-    "ckeditor_uploader",
+    "axes",
     'apps.approval_chain',
     "django_extensions",
+    "django_ckeditor_5",
 ]
 
 # ✅ *Middleware*
@@ -105,7 +107,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer" if USE_REDIS else "channels.layers.InMemoryChannelLayer",
         "CONFIG": {
-            "hosts": [(REDIS_URL)] if USE_REDIS else [],
+            "hosts": [REDIS_URL] if USE_REDIS else [],
         } if USE_REDIS else {},
     },
 }

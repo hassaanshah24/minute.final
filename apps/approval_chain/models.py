@@ -3,7 +3,7 @@ from django.db import models, transaction
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.apps import apps  # ✅ Prevents circular imports
-
+from django.db.models import F
 User = get_user_model()
 
 
@@ -187,54 +187,72 @@ class Approver(models.Model):
         self.approval_chain.minute.finalize_minute("Rejected")
 
     @transaction.atomic
-    def mark_to(self, target_user, target_order):
+    def mark_to(self, target_user, target_order=None):
         """
         Inserts a new approver at the specified order in the chain.
-        If an approver already exists at that order, shift all subsequent approvers down.
+        - If an approver already exists at that order, shifts all subsequent approvers down.
+        - Ensures the approval chain remains valid.
+        - Only one approver remains active (`is_current=True`).
         """
         if not self.is_current:
             raise ValidationError("You are not the current approver for this minute.")
 
         if self.approval_chain.approvers.filter(user=target_user).exists():
-            raise ValidationError("This user is already in the approval chain.")
+            raise ValidationError(f"{target_user.get_full_name()} is already in the approval chain.")
 
-        # ✅ Shift all existing approvers if needed
-        existing_orders = self.approval_chain.approvers.filter(order__gte=target_order)
-        for approver in existing_orders:
-            approver.order += 1
-            approver.save()
+        max_order = self.approval_chain.approvers.aggregate(models.Max("order"))["order__max"] or 0
+        target_order = target_order or max_order + 1  # Default to the next available order
 
-        # ✅ Add the new approver at the specified order
+        # ✅ If inserting at the last position, just append without shifting others
+        if target_order <= max_order:
+            # Shift all affected approvers down by 1 position
+            self.approval_chain.approvers.filter(order__gte=target_order).update(order=F("order") + 1)
+
+        # ✅ Add new approver at the target order
         new_approver = Approver.objects.create(
             approval_chain=self.approval_chain,
             user=target_user,
             order=target_order,
             status="Pending",
-            is_current=False
+            is_current=False  # Initially inactive
         )
 
-        # ✅ Update current approver status to "Marked"
+        # ✅ Update current approver status to "Marked" and deactivate
         self.status = "Marked"
         self.is_current = False
         self.save()
 
-        # ✅ Make the newly added approver the active approver
-        new_approver.is_current = True
-        new_approver.save()
+        # ✅ Ensure only one approver remains active
+        next_approver = self.approval_chain.approvers.filter(order__gt=self.order, status="Pending").order_by(
+            "order").first()
+
+        if next_approver:
+            next_approver.is_current = True
+            next_approver.save()
+        else:
+            new_approver.is_current = True  # If no next approver, activate the new one
+            new_approver.save()
 
     @transaction.atomic
     def return_to(self, target_user):
         """
         Sends the minute back to a previous approver.
         """
+        if not self.is_current:
+            raise ValidationError("You are not the current approver for this minute.")
+
         previous_approver = self.approval_chain.approvers.filter(user=target_user, order__lt=self.order).first()
 
         if not previous_approver:
             raise ValidationError("The selected user is not a previous approver.")
 
+        # ✅ Deactivate current approver
         self.is_current = False
+        self.status = "Returned"
         self.save()
 
+        # ✅ Reactivate previous approver
         previous_approver.is_current = True
-        previous_approver.status = "Pending"  # ✅ Reset status so they need to approve again
+        if previous_approver.status != "Pending":
+            previous_approver.status = "Pending"
         previous_approver.save()

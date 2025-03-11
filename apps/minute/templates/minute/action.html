@@ -11,7 +11,7 @@
         <p class="text-muted">You are the active approver. Please take action on this minute.</p>
     </div>
 
-    <!-- ✅ Display the Minute as a Paper Document -->
+    <!-- ✅ Display the Minute Sheet -->
     {% include "minute/minute_sheet.html" with minute=minute current_description=current_description current_page=current_page total_pages=total_pages %}
 
     <!-- ✅ Approval Action Panel -->
@@ -24,38 +24,25 @@
                 You are reviewing this minute as <strong>{{ current_approver.user.get_full_name }}</strong> (Order {{ current_approver.order }})
             </p>
 
-            <!-- ✅ FORM to Handle All Actions -->
+            <!-- ✅ FORM to Handle Approve, Reject, Return-To -->
             <form id="action-form" method="post">
                 {% csrf_token %}
-
-                <!-- ✅ Hidden Input for Action Type -->
                 <input type="hidden" id="action-type" name="action" value="">
+
+                <!-- ✅ Remark Input (Optional for all actions) -->
+                <div class="mb-3">
+                    <label for="remark" class="form-label">💬 Add Remark (Optional)</label>
+                    <textarea name="remark_text" id="remark" class="form-control" rows="2" placeholder="Add a remark..."></textarea>
+                </div>
 
                 <!-- ✅ Action Buttons -->
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <button type="button" class="btn btn-success btn-lg action-btn" data-action="approve">
+                    <button type="submit" class="btn btn-success btn-lg action-btn" data-action="approve">
                         ✅ Approve
                     </button>
-                    <button type="button" class="btn btn-danger btn-lg action-btn" data-action="reject">
+                    <button type="submit" class="btn btn-danger btn-lg action-btn" data-action="reject">
                         ❌ Reject
                     </button>
-                </div>
-
-                <!-- 🔄 Mark-To (Send to a New Approver) -->
-                <div class="mt-4 p-3 border rounded">
-                    <h5 class="fw-bold">🔄 Mark-To (Assign to Another Approver)</h5>
-                    <p class="text-muted">Select a user and assign them a position in the approval chain.</p>
-                    <div class="row">
-                        <div class="col-md-6">
-                            {{ mark_form.user.label_tag }}
-                            {{ mark_form.user }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ mark_form.order.label_tag }}
-                            {{ mark_form.order }}
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary mt-3 action-btn" data-action="mark_to">Mark To</button>
                 </div>
 
                 <!-- ⏪ Return-To (Send Back to a Previous Approver) -->
@@ -68,26 +55,88 @@
                             {{ return_form.user }}
                         </div>
                     </div>
-                    <button type="button" class="btn btn-warning mt-3 action-btn" data-action="return_to">Return To</button>
+                    <button type="submit" class="btn btn-warning mt-3 action-btn" data-action="return_to">Return To</button>
                 </div>
             </form>
+
+            <!-- 🔄 Mark-To (Send to a New Approver) -->
+            <div class="mt-4 p-3 border rounded">
+                <h5 class="fw-bold">🔄 Mark-To (Assign to Another Approver)</h5>
+                <p class="text-muted">Select a user and assign them a position in the approval chain.</p>
+
+                <form method="post" id="mark-to-form">  <!-- ✅ Separate Form -->
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="mark_to">  <!-- ✅ Explicitly define action -->
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ mark_form.user.label_tag }}
+                            {{ mark_form.user }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ mark_form.order.label_tag }}
+                            {{ mark_form.order }}
+                        </div>
+                    </div>
+
+                    <!-- ✅ Remark Input (Optional for Mark-To) -->
+                    <div class="mt-3">
+                        <label for="remark_mark_to" class="form-label">💬 Add Remark (Optional)</label>
+                        <textarea name="remark_text" id="remark_mark_to" class="form-control" rows="2" placeholder="Add a remark..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Mark To</button>  <!-- ✅ Direct Form Submission -->
+                </form>
+            </div>
 
         </div>
     </div>
 </div>
 
-<!-- ✅ SIMPLE JavaScript to Handle Button Clicks -->
+<!-- ✅ Fully Corrected JavaScript -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".action-btn").forEach(button => {
+    const actionForm = document.getElementById("action-form");
+    const actionTypeInput = document.getElementById("action-type");
+    const remarkField = document.getElementById("remark");
+    const actionButtons = document.querySelectorAll(".action-btn");
+
+    actionButtons.forEach(button => {
         button.addEventListener("click", function (event) {
-            event.preventDefault();  // Prevent default behavior
+            event.preventDefault();
 
-            // ✅ Set action type
-            document.getElementById("action-type").value = this.getAttribute("data-action");
+            const action = this.getAttribute("data-action");
 
-            // ✅ Submit form normally (No AJAX)
-            document.getElementById("action-form").submit();
+            // ✅ Ensure Mark-To is handled by its separate form
+            if (action === "mark_to") {
+                document.getElementById("mark-to-form").submit();
+                return;
+            }
+
+            // ✅ Set Action Type
+            actionTypeInput.value = action;
+
+            // ✅ Append Remark to Form Data
+            const remarkText = remarkField.value.trim();
+            const hiddenRemarkInput = document.createElement("input");
+            hiddenRemarkInput.type = "hidden";
+            hiddenRemarkInput.name = "remark_text";
+            hiddenRemarkInput.value = remarkText;
+            actionForm.appendChild(hiddenRemarkInput);
+
+            // ✅ Confirmation for Critical Actions
+            if (action === "reject" || action === "return_to") {
+                if (!confirm(`Are you sure you want to proceed with the "${action.replace("_", " ")}" action?`)) {
+                    return;
+                }
+            }
+
+            // ✅ Show Loading State
+            this.textContent = "Processing...";
+            this.disabled = true;
+
+            // ✅ Submit Form
+            actionForm.submit();
         });
     });
 });
